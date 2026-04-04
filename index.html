@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一弭 - 人生困惑，一弭化解</title>
+    <title>一弭 - 人生智慧指引</title>
     <style>
         * {
             margin: 0;
@@ -12,345 +12,307 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
             text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .header h1 {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 5px;
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 10px;
         }
 
         .header p {
-            color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .category-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .category-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .category-btn.active {
+            background: #667eea;
+            color: white;
         }
 
         .chat-container {
             flex: 1;
-            max-width: 800px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .welcome {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 24px;
-        }
-
-        .welcome p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .quick-questions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .quick-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: transform 0.2s;
-        }
-
-        .quick-btn:hover {
-            transform: translateY(-2px);
+            padding: 20px;
+            min-height: 400px;
+            max-height: 500px;
         }
 
         .message {
+            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            align-items: flex-start;
         }
 
         .message.user {
-            flex-direction: row-reverse;
+            justify-content: flex-end;
         }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .message.assistant .avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .message.user .avatar {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .bubble {
+        .message-content {
             max-width: 70%;
-            padding: 15px 20px;
-            border-radius: 20px;
+            padding: 12px 16px;
+            border-radius: 18px;
             line-height: 1.6;
             white-space: pre-wrap;
         }
 
-        .message.assistant .bubble {
-            background: white;
-            color: #333;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .message.user .bubble {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .message.user .message-content {
+            background: #667eea;
             color: white;
         }
 
-        .typing-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 18px;
-            background: #667eea;
-            animation: blink 1s infinite;
-            vertical-align: middle;
-            margin-left: 2px;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        .message.assistant .message-content {
+            background: #f1f3f4;
+            color: #333;
         }
 
         .input-container {
-            background: white;
             padding: 20px;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 1px solid #eee;
         }
 
-        .input-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
+        .input-group {
             display: flex;
             gap: 10px;
         }
 
-        .input-wrapper textarea {
+        input[type="text"] {
             flex: 1;
-            padding: 15px;
+            padding: 15px 20px;
             border: 2px solid #e0e0e0;
             border-radius: 25px;
             font-size: 16px;
-            resize: none;
             outline: none;
-            font-family: inherit;
             transition: border-color 0.3s;
         }
 
-        .input-wrapper textarea:focus {
+        input[type="text"]:focus {
             border-color: #667eea;
         }
 
-        .send-btn {
-            width: 50px;
-            height: 50px;
-            border: none;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        button.send-btn {
+            padding: 15px 30px;
+            background: #667eea;
             color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
             cursor: pointer;
-            font-size: 20px;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
 
-        .send-btn:hover {
-            transform: scale(1.1);
+        button.send-btn:hover {
+            background: #764ba2;
         }
 
-        .send-btn:disabled {
-            opacity: 0.5;
+        button.send-btn:disabled {
+            background: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
 
-        @media (max-width: 768px) {
-            .header h1 { font-size: 24px; }
-            .bubble { max-width: 85%; }
-            .welcome { padding: 20px; }
+        .typing {
+            display: flex;
+            gap: 5px;
+            padding: 15px;
+        }
+
+        .typing span {
+            width: 8px;
+            height: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing span:nth-child(1) { animation-delay: -0.32s; }
+        .typing span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            color: #999;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>一弭</h1>
-        <p>人生困惑，一弭化解</p>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1>一弭</h1>
+            <p>人生智慧，一弭化解</p>
+        </div>
 
-    <div class="chat-container" id="chatContainer">
-        <div class="welcome" id="welcomeMessage">
-            <h2>欢迎来到一弭</h2>
-            <p>我是一个实用的AI助手，帮助你解决人生困惑。</p>
-            <div class="quick-questions">
-                <button class="quick-btn" onclick="askQuestion('工作中遇到小人怎么办？')">工作困扰</button>
-                <button class="quick-btn" onclick="askQuestion('如何处理人际关系？')">人际关系</button>
-                <button class="quick-btn" onclick="askQuestion('感到迷茫怎么办？')">感到迷茫</button>
-                <button class="quick-btn" onclick="askQuestion('如何提升自己？')">自我提升</button>
+        <div class="category-selector">
+            <button class="category-btn active" data-category="general">全部</button>
+            <button class="category-btn" data-category="workplace">职场智慧</button>
+            <button class="category-btn" data-category="relationship">人际关系</button>
+            <button class="category-btn" data-category="emotion">情感困扰</button>
+            <button class="category-btn" data-category="direction">人生方向</button>
+            <button class="category-btn" data-category="mood">情绪管理</button>
+            <button class="category-btn" data-category="family">家庭关系</button>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message assistant">
+                <div class="message-content">你好，我是一弭。有什么困惑，尽管说出来。</div>
             </div>
         </div>
-    </div>
 
-    <div class="input-container">
-        <div class="input-wrapper">
-            <textarea id="messageInput" placeholder="输入你的问题..." rows="1" onkeypress="handleKeyPress(event)"></textarea>
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        <div class="input-container">
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="说说你的困惑..." />
+                <button class="send-btn" id="sendBtn">发送</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            onestand.cn · 一弭
         </div>
     </div>
 
     <script>
-        let conversationHistory = [];
-        let isLoading = false;
+        let currentCategory = 'general';
+        let history = [];
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+            });
+        });
+
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatContainer = document.getElementById('chatContainer');
+
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = `
+                <div class="typing">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
 
         async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+            const message = userInput.value.trim();
+            if (!message) return;
 
-            if (!message || isLoading) return;
-
-            document.getElementById('welcomeMessage').style.display = 'none';
             addMessage('user', message);
-            input.value = '';
-
-            isLoading = true;
-            updateSendButton();
-
-            const messageDiv = createAssistantMessage();
+            userInput.value = '';
+            sendBtn.disabled = true;
+            showTyping();
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message, history: conversationHistory })
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        category: currentCategory,
+                        history: history.slice(-4)
+                    })
                 });
 
                 const data = await response.json();
+                removeTyping();
 
                 if (data.success) {
-                    await typeWriter(messageDiv, data.reply);
-                    conversationHistory.push(
+                    addMessage('assistant', data.reply);
+                    history.push(
                         { role: 'user', content: message },
                         { role: 'assistant', content: data.reply }
                     );
                 } else {
-                    messageDiv.textContent = '抱歉，出现了一些问题：' + data.error;
+                    addMessage('assistant', `抱歉，出现了一些问题：${data.error}`);
                 }
             } catch (error) {
-                messageDiv.textContent = '网络错误，请稍后重试';
-            } finally {
-                isLoading = false;
-                updateSendButton();
+                removeTyping();
+                addMessage('assistant', '抱歉，网络出现了问题，请稍后再试。');
             }
+
+            sendBtn.disabled = false;
         }
 
-        function createAssistantMessage() {
-            const container = document.getElementById('chatContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message assistant';
-            messageDiv.innerHTML = '<div class="avatar">弭</div><div class="bubble"><span class="typing-cursor"></span></div>';
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-            return messageDiv.querySelector('.bubble');
-        }
-
-        async function typeWriter(element, text) {
-            const cursor = element.querySelector('.typing-cursor');
-            if (cursor) cursor.remove();
-            element.textContent = '';
-
-            const chars = text.split('');
-            for (let i = 0; i < chars.length; i++) {
-                element.textContent += chars[i];
-                if (i % 10 === 0) {
-                    const container = document.getElementById('chatContainer');
-                    container.scrollTop = container.scrollHeight;
-                }
-                await sleep(20);
-            }
-        }
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        function addMessage(role, content) {
-            const container = document.getElementById('chatContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
-            const avatar = role === 'assistant' ? '弭' : '我';
-            messageDiv.innerHTML = `<div class="avatar">${avatar}</div><div class="bubble">${content}</div>`;
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function updateSendButton() {
-            const btn = document.getElementById('sendBtn');
-            btn.disabled = isLoading;
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        }
-
-        function askQuestion(question) {
-            document.getElementById('messageInput').value = question;
-            sendMessage();
-        }
-
-        document.getElementById('messageInput').addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
         });
     </script>
 </body>
