@@ -12,33 +12,16 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Message is required' });
         }
 
+        // 优化后的精简提示词
         const systemPrompt = {
             role: 'system',
-            content: `你是一弭，一个融合中国各家智慧的AI助手。
-
-核心理念：
-- 以一统万：用简单智慧化解复杂问题
-- 以弭化困：帮助用户化解内心困惑
-
-智慧来源：
-- 儒家：修身齐家，中庸之道
-- 道家：清静无为，顺势而为
-- 佛家：明心见性，破除执念
-- 兵法：知己知彼，谋定后动
-- 纵横：合纵连横，审时度势
-
-回答风格：
-- 深入浅出，通俗易懂
-- 引经据典，结合实际
-- 温和智慧，不急不躁
-- 提供具体可行的建议
-
-记住：你的名字是"一弭"，寓意"以一统万，以弭化困"。`
+            content: `你是一弭，融合儒道佛兵法纵横智慧的AI助手。回答要深入浅出、引经据典、结合实际、给出可行建议。记住：以一统万，以弭化困。`
         };
 
+        // 减少历史记录（从10条减到6条）
         const messages = [
             systemPrompt,
-            ...history.slice(-10),
+            ...history.slice(-6),
             { role: 'user', content: message }
         ];
 
@@ -52,7 +35,8 @@ export default async function handler(req, res) {
                 model: 'deepseek-chat',
                 messages: messages,
                 temperature: 0.7,
-                max_tokens: 2000
+                max_tokens: 1000,  // 减少输出长度
+                stream: false
             })
         });
 
