@@ -70,14 +70,14 @@
             margin-bottom: 20px;
         }
 
-        .example-questions {
+        .quick-questions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
         }
 
-        .example-btn {
+        .quick-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -88,7 +88,7 @@
             transition: transform 0.2s;
         }
 
-        .example-btn:hover {
+        .quick-btn:hover {
             transform: translateY(-2px);
         }
 
@@ -147,26 +147,19 @@
             color: white;
         }
 
-        .loading {
-            display: flex;
-            gap: 5px;
-            padding: 15px 20px;
-        }
-
-        .loading span {
-            width: 8px;
-            height: 8px;
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 18px;
             background: #667eea;
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 2px;
         }
 
-        .loading span:nth-child(1) { animation-delay: -0.32s; }
-        .loading span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
 
         .input-container {
@@ -224,7 +217,6 @@
             .header h1 { font-size: 24px; }
             .bubble { max-width: 85%; }
             .welcome { padding: 20px; }
-            .welcome h2 { font-size: 20px; }
         }
     </style>
 </head>
@@ -237,25 +229,19 @@
     <div class="chat-container" id="chatContainer">
         <div class="welcome" id="welcomeMessage">
             <h2>欢迎来到一弭</h2>
-            <p>我是一个融合中国各家智慧的AI助手，帮助你知己知彼、明心见性、处世通达、内心自在。</p>
-            <p>你可以问我：</p>
-            <div class="example-questions">
-                <button class="example-btn" onclick="askQuestion('工作中遇到小人怎么办？')">工作中遇到小人怎么办？</button>
-                <button class="example-btn" onclick="askQuestion('如何处理人际关系？')">如何处理人际关系？</button>
-                <button class="example-btn" onclick="askQuestion('感到迷茫怎么办？')">感到迷茫怎么办？</button>
-                <button class="example-btn" onclick="askQuestion('如何提升自己？')">如何提升自己？</button>
+            <p>我是一个实用的AI助手，帮助你解决人生困惑。</p>
+            <div class="quick-questions">
+                <button class="quick-btn" onclick="askQuestion('工作中遇到小人怎么办？')">工作困扰</button>
+                <button class="quick-btn" onclick="askQuestion('如何处理人际关系？')">人际关系</button>
+                <button class="quick-btn" onclick="askQuestion('感到迷茫怎么办？')">感到迷茫</button>
+                <button class="quick-btn" onclick="askQuestion('如何提升自己？')">自我提升</button>
             </div>
         </div>
     </div>
 
     <div class="input-container">
         <div class="input-wrapper">
-            <textarea
-                id="messageInput"
-                placeholder="输入你的问题..."
-                rows="1"
-                onkeypress="handleKeyPress(event)"
-            ></textarea>
+            <textarea id="messageInput" placeholder="输入你的问题..." rows="1" onkeypress="handleKeyPress(event)"></textarea>
             <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
         </div>
     </div>
@@ -272,109 +258,87 @@
 
             document.getElementById('welcomeMessage').style.display = 'none';
             addMessage('user', message);
-            input
-.value = '';
+            input.value = '';
 
-            isLoading 
-= true;
+            isLoading = true;
             updateSendButton();
-            const loadingDiv = showLoading();
+
+            const messageDiv = createAssistantMessage();
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        history:
- conversationHistory
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message, history: conversationHistory })
                 });
 
                 const data = await response.json();
-                loadingDiv
-.remove();
 
                 if (data.success) {
-                    addMessage('assistant', data.reply);
-                    conversationHistory
-.push(
+                    await typeWriter(messageDiv, data.reply);
+                    conversationHistory.push(
                         { role: 'user', content: message },
                         { role: 'assistant', content: data.reply }
                     );
                 } else {
-                    addMessage('assistant', '抱歉，出现了一些问题：' + data.error);
+                    messageDiv.textContent = '抱歉，出现了一些问题：' + data.error;
                 }
             } catch (error) {
-                loadingDiv
-.remove();
-                addMessage('assistant', '网络错误，请检查网络连接后重试');
-                console.error('Error:', error);
+                messageDiv.textContent = '网络错误，请稍后重试';
             } finally {
-                isLoading 
-= false;
+                isLoading = false;
                 updateSendButton();
             }
+        }
+
+        function createAssistantMessage() {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message assistant';
+            messageDiv.innerHTML = '<div class="avatar">弭</div><div class="bubble"><span class="typing-cursor"></span></div>';
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+            return messageDiv.querySelector('.bubble');
+        }
+
+        async function typeWriter(element, text) {
+            const cursor = element.querySelector('.typing-cursor');
+            if (cursor) cursor.remove();
+            element.textContent = '';
+
+            const chars = text.split('');
+            for (let i = 0; i < chars.length; i++) {
+                element.textContent += chars[i];
+                if (i % 10 === 0) {
+                    const container = document.getElementById('chatContainer');
+                    container.scrollTop = container.scrollHeight;
+                }
+                await sleep(20);
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
         }
 
         function addMessage(role, content) {
             const container = document.getElementById('chatContainer');
             const messageDiv = document.createElement('div');
-            messageDiv
-.className = `message ${role}`;
-
+            messageDiv.className = `message ${role}`;
             const avatar = role === 'assistant' ? '弭' : '我';
-
-            messageDiv
-.innerHTML = `
-                <div class="avatar">${avatar}</div>
-                <div class="bubble">${content}</div>
-            `;
-
-            container
-.appendChild(messageDiv);
-            container
-.scrollTop = container.scrollHeight;
-        }
-
-        function showLoading() {
-            const container = document.getElementById('chatContainer');
-            const loadingDiv = document.createElement('div');
-            loadingDiv
-.className = 'message assistant';
-            loadingDiv
-.id = 'loading';
-
-            loadingDiv
-.innerHTML = `
-                <div class="avatar">弭</div>
-                <div class="loading">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            `;
-
-            container
-.appendChild(loadingDiv);
-            container
-.scrollTop = container.scrollHeight;
-
-            return loadingDiv;
+            messageDiv.innerHTML = `<div class="avatar">${avatar}</div><div class="bubble">${content}</div>`;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
         }
 
         function updateSendButton() {
             const btn = document.getElementById('sendBtn');
-            btn
-.disabled = isLoading;
+            btn.disabled = isLoading;
         }
 
         function handleKeyPress(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
-                event
-.preventDefault();
+                event.preventDefault();
                 sendMessage();
             }
         }
