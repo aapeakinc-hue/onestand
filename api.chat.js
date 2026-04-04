@@ -1,5 +1,25 @@
 const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
 
+// 过滤文言文和引用
+function filterReply(reply) {
+    // 去掉古籍引用（《xxx》）
+    let filtered = reply.replace(/《[^》]+》/g, '');
+
+    // 去掉名言引用（"xxx"）
+    filtered = filtered.replace(/"[^"]{10,}"/g, '');
+
+    // 去掉"切记"、"记住"、"最后"等词
+    filtered = filtered.replace(/切记|记住|最后|总之|综上所述/g, '');
+
+    // 去掉多余空行
+    filtered = filtered.replace(/\n{3,}/g, '\n\n');
+
+    // 去掉开头结尾空格
+    filtered = filtered.trim();
+
+    return filtered;
+}
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -96,7 +116,7 @@ export default async function handler(req, res) {
         }
 
         const data = await response.json();
-        const reply = data.choices[0].message.content;
+        const reply = filterReply(data.choices[0].message.content);
 
         res.status(200).json({
             success: true,
