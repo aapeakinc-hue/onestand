@@ -23,11 +23,11 @@
 
         .container {
             background: #fffef9;
-            border-radius: 16px;
-            box-shadow: 0 2px 20px rgba(139, 69, 19, 0.08);
-            max-width: 840px;
+            border-radius: 20px;
+            box-shadow: 0 4px 30px rgba(139, 69, 19, 0.1);
+            max-width: 1000px;
             width: 100%;
-            height: 90vh;
+            height: 92vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -37,24 +37,24 @@
         .header {
             background: linear-gradient(135deg, #fffef9 0%, #f8f4ed 100%);
             color: #8b4413;
-            padding: 24px 40px 20px;
+            padding: 32px 48px 24px;
             text-align: center;
             flex-shrink: 0;
             border-bottom: 1px solid #e8e0d5;
         }
 
         .logo {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 12px;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
             display: block;
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         .header p {
-            font-size: 28px;
+            font-size: 34px;
             font-weight: 400;
-            letter-spacing: 4px;
+            letter-spacing: 6px;
             color: #8b4413;
             font-family: "LXGW WenKai", "STLiti", "隶书", serif;
         }
@@ -71,16 +71,16 @@
         }
 
         .main-category {
-            padding: 14px 24px;
+            padding: 18px 32px;
             background: transparent;
             color: #8b7355;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             transition: all 0.2s ease;
             font-weight: 400;
             white-space: nowrap;
-            border-bottom: 2px solid transparent;
+            border-bottom: 3px solid transparent;
         }
 
         .main-category:hover {
@@ -99,8 +99,8 @@
         .sub-categories {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 14px 24px;
+            gap: 10px;
+            padding: 18px 32px;
             border-bottom: 1px solid #e8e0d5;
             justify-content: flex-start;
             flex-shrink: 0;
@@ -108,13 +108,13 @@
         }
 
         .sub-category {
-            padding: 5px 14px;
+            padding: 8px 18px;
             border: 1px solid #d8cdb8;
             background: #faf8f5;
             color: #8b7355;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
             transition: all 0.2s ease;
             font-weight: 400;
         }
@@ -135,8 +135,8 @@
         .suggested-questions {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            padding: 12px 24px;
+            gap: 10px;
+            padding: 16px 32px;
             background: #faf8f5;
             border-bottom: 1px solid #e8e0d5;
             flex-shrink: 0;
@@ -144,17 +144,17 @@
 
         .suggested-questions-label {
             width: 100%;
-            font-size: 11px;
+            font-size: 13px;
             color: #b8a890;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .suggested-question {
-            padding: 6px 12px;
+            padding: 8px 16px;
             background: #fff;
             border: 1px solid #e8e0d5;
-            border-radius: 12px;
-            font-size: 12px;
+            border-radius: 16px;
+            font-size: 14px;
             color: #8b7355;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -169,12 +169,12 @@
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 24px;
+            padding: 32px;
             background: #faf8f5;
         }
 
         .message {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: flex-start;
             animation: fadeIn 0.3s ease;
@@ -196,31 +196,31 @@
         }
 
         .message-content {
-            max-width: 65%;
-            padding: 12px 16px;
-            border-radius: 16px;
-            line-height: 1.7;
+            max-width: 60%;
+            padding: 16px 22px;
+            border-radius: 20px;
+            line-height: 1.8;
             white-space: pre-wrap;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .message.user .message-content {
             background: #8b4413;
             color: #fff;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 8px rgba(139, 68, 19, 0.15);
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 3px 12px rgba(139, 68, 19, 0.18);
         }
 
         .message.assistant .message-content {
             background: #fff;
             color: #5a4a3a;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 8px rgba(139, 68, 19, 0.06);
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 3px 12px rgba(139, 68, 19, 0.08);
             border: 1px solid #e8e0d5;
         }
 
         .input-container {
-            padding: 16px 24px;
+            padding: 20px 32px;
             border-top: 1px solid #e8e0d5;
             flex-shrink: 0;
             background: #fffef9;
@@ -230,40 +230,40 @@
         .current-category {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            gap: 8px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, #f8f4ed 0%, #fff 100%);
             border: 1px solid #d8cdb8;
-            border-radius: 16px;
-            font-size: 12px;
+            border-radius: 20px;
+            font-size: 14px;
             color: #8b4413;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .current-category-icon {
-            width: 14px;
-            height: 14px;
+            width: 18px;
+            height: 18px;
             background: #8b4413;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 10px;
+            font-size: 12px;
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
+            gap: 14px;
             align-items: center;
         }
 
         input[type="text"] {
             flex: 1;
-            padding: 12px 18px;
+            padding: 16px 24px;
             border: 1px solid #d8cdb8;
-            border-radius: 24px;
-            font-size: 14px;
+            border-radius: 28px;
+            font-size: 16px;
             outline: none;
             transition: all 0.2s ease;
             background: #faf8f5;
@@ -273,7 +273,7 @@
         input[type="text"]:focus {
             border-color: #8b4413;
             background: #fff;
-            box-shadow: 0 0 0 3px rgba(139, 68, 19, 0.08);
+            box-shadow: 0 0 0 4px rgba(139, 68, 19, 0.1);
         }
 
         input[type="text"]::placeholder {
@@ -281,23 +281,23 @@
         }
 
         button.send-btn {
-            padding: 12px 28px;
+            padding: 16px 36px;
             background: #8b4413;
             color: #fff;
             border: none;
-            border-radius: 24px;
-            font-size: 14px;
+            border-radius: 28px;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: 500;
-            box-shadow: 0 4px 12px rgba(139, 68, 19, 0.2);
+            box-shadow: 0 4px 16px rgba(139, 68, 19, 0.25);
             font-family: inherit;
         }
 
         button.send-btn:hover {
             background: #a0522d;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(139, 68, 19, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 68, 19, 0.3);
         }
 
         button.send-btn:active {
@@ -313,18 +313,18 @@
 
         .typing {
             display: flex;
-            gap: 6px;
-            padding: 12px 16px;
+            gap: 8px;
+            padding: 16px 22px;
             background: #fff;
-            border-radius: 16px;
+            border-radius: 20px;
             border: 1px solid #e8e0d5;
-            box-shadow: 0 2px 8px rgba(139, 68, 19, 0.06);
-            max-width: 70px;
+            box-shadow: 0 3px 12px rgba(139, 68, 19, 0.08);
+            max-width: 80px;
         }
 
         .typing span {
-            width: 7px;
-            height: 7px;
+            width: 9px;
+            height: 9px;
             background: #8b4413;
             border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out;
@@ -340,12 +340,12 @@
 
         .footer {
             text-align: center;
-            padding: 10px;
+            padding: 14px;
             color: #b8a890;
-            font-size: 11px;
+            font-size: 13px;
             flex-shrink: 0;
             background: #fffef9;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
 
         /* 滚动条美化 */
@@ -353,8 +353,8 @@
         .sub-categories::-webkit-scrollbar,
         .main-categories::-webkit-scrollbar,
         .suggested-questions::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
         }
 
         .chat-container::-webkit-scrollbar-track,
@@ -369,11 +369,11 @@
         .main-categories::-webkit-scrollbar-thumb,
         .suggested-questions::-webkit-scrollbar-thumb {
             background: #d8cdb8;
-            border-radius: 2px;
+            border-radius: 3px;
         }
 
         /* 移动端适配 */
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             body {
                 padding: 0;
             }
@@ -381,19 +381,21 @@
             .container {
                 border-radius: 0;
                 height: 100vh;
+                max-width: 100%;
             }
 
             .header {
-                padding: 20px 16px;
+                padding: 24px 20px;
             }
 
             .logo {
-                width: 56px;
-                height: 56px;
+                width: 60px;
+                height: 60px;
             }
 
             .header p {
-                font-size: 24px;
+                font-size: 26px;
+                letter-spacing: 4px;
             }
 
             .main-categories {
@@ -401,57 +403,62 @@
             }
 
             .main-category {
-                padding: 12px 16px;
-                font-size: 13px;
+                padding: 14px 20px;
+                font-size: 14px;
             }
 
             .sub-categories {
-                padding: 12px 16px;
-                gap: 6px;
+                padding: 14px 20px;
+                gap: 8px;
             }
 
             .sub-category {
-                padding: 4px 12px;
-                font-size: 11px;
+                padding: 6px 14px;
+                font-size: 12px;
             }
 
             .suggested-questions {
-                padding: 10px 16px;
-                gap: 6px;
+                padding: 12px 20px;
+                gap: 8px;
             }
 
             .suggested-question {
-                padding: 5px 10px;
-                font-size: 11px;
+                padding: 6px 12px;
+                font-size: 12px;
             }
 
             .chat-container {
-                padding: 16px;
+                padding: 20px;
             }
 
             .message-content {
                 max-width: 80%;
-                padding: 10px 14px;
-                font-size: 13px;
+                padding: 12px 16px;
+                font-size: 14px;
             }
 
             .input-container {
-                padding: 12px 16px;
+                padding: 16px 20px;
             }
 
             .current-category {
-                font-size: 11px;
-                padding: 5px 10px;
+                font-size: 12px;
+                padding: 6px 12px;
             }
 
             input[type="text"] {
-                padding: 10px 14px;
-                font-size: 13px;
+                padding: 12px 18px;
+                font-size: 14px;
             }
 
             button.send-btn {
-                padding: 10px 20px;
-                font-size: 13px;
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .footer {
+                font-size: 11px;
+                padding: 12px;
             }
         }
     </style>
@@ -571,7 +578,7 @@
                     { 
                         id: 'stranger', 
                         name: '陌生人沟通',
-                        questions: ['如何破冰和陌生人聊天？', ['怎样快速建立信任？'], ['怎么让人愿意帮我？']]
+                        questions: ['如何破冰和陌生人聊天？', '怎样快速建立信任？', '怎么让人愿意帮我？']
                     },
                     { 
                         id: 'conflict', 
@@ -601,12 +608,12 @@
                     { 
                         id: 'cheating', 
                         name: '出轨背叛处理',
-                        questions: ['发现对方出轨怎么办？', ['被背叛后还能信任吗？'], ['该不该原谅出轨的人？']]
+                        questions: ['发现对方出轨怎么办？', '被背叛后还能信任吗？', '该不该原谅出轨的人？']
                     },
                     { 
                         id: 'single', 
                         name: '单身脱单困扰',
-                        questions: ['一直单身是什么原因？', '相亲总是失败怎么办？', ['如何扩大交友圈？']]
+                        questions: ['一直单身是什么原因？', '相亲总是失败怎么办？', '如何扩大交友圈？']
                     },
                     { 
                         id: 'ex', 
@@ -621,7 +628,7 @@
                     { 
                         id: 'mother-in-law', 
                         name: '婆媳矛盾化解',
-                        questions: ['婆婆总是干涉我们怎么办？', ['婆媳关系不好怎么调解？'], ['老公不理解我的委屈怎么办？']]
+                        questions: ['婆婆总是干涉我们怎么办？', '婆媳关系不好怎么调解？', '老公不理解我的委屈怎么办？']
                     },
                     { 
                         id: 'parenting', 
