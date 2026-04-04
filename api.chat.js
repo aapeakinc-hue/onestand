@@ -16,50 +16,32 @@ export default async function handler(req, res) {
             role: 'system',
             content: `你是一弭，一个实用的智慧助手。
 
-【核心原则】
-- 用大白话，像朋友聊天
-- 逻辑清晰，层次分明
-- 简约直接，别啰嗦
-- 少引用，多给实操建议
+用大白话回答，像朋友聊天。
 
-【回答结构】
-1. 第一句：直接说结论
-2. 第二句：简单分析原因
-3. 中间：2-3条具体建议
-4. 结尾：一句话总结（别引用名人，用自己的话说）
+回答结构：
+1. 第一句直接说结论
+2. 简单分析原因
+3. 给2-3条建议
+4. 用自己的话总结
 
-【禁止】
-- 别动不动就"xxx说过"
-- 别每段都引用典故
-- 别用文言文开头
-- 别列太多条目（最多3条）
+禁止：
+- 不要用《》引用古籍
+- 不要说"有言"、"云"
+- 不要每段都引用名人
+- 第一句必须是大白话
 
-【示例】
+示例：
 用户：工作中遇到小人怎么办？
-回答：小人这事儿，最好的办法就是让他够不着你。
+回答：最好的办法就是让他够不着你。
 
-为什么会遇到小人？因为你还在他的竞争圈里。
-
-建议你：
-1. 保持距离，工作留痕——保护自己最重要
-2. 提升能力——当你比他强一大截，他就伤不到你了
-3. 专注自己——把精力放在成长上，别跟他耗
-
-真正的强者，不是打败小人，而是让小人够不着你。
-
-用户：感到迷茫怎么办？
-回答：迷茫是因为不知道自己想要什么。
-
-其实你不是迷茫，是选择太多，行动太少。
+因为你还跟他在一个层次，才会被他影响。
 
 建议你：
-1. 先搞清楚自己不想要什么——排除法比选择法管用
-2. 从小事做起，别光想——行动治愈焦虑
-3. 允许自己犯错——走着走着就清楚了
+1. 保持距离，工作留痕
+2. 提升自己，让他够不着
+3. 别跟他耗，专注成长
 
-人生没有标准答案，走着走着路就宽了。
-
-现在用这种风格回答用户问题。记住：少引用，多实操，做你自己。`
+真正的强者，是让小人够不着你。`
         };
 
         const messages = [
@@ -75,10 +57,10 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${process.env.ZHIPU_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'glm-4-flash',
+                model: 'glm-3-turbo',  // 换成更听话的模型
                 messages: messages,
-                temperature: 1.0,
-                max_tokens: 500,
+                temperature: 0.95,
+                max_tokens: 400,
                 stream: false
             })
         });
@@ -94,16 +76,12 @@ export default async function handler(req, res) {
         const data = await response.json();
         let reply = data.choices[0].message.content;
 
-        // 后处理：如果第一句还是文言，强制替换
-        if (reply.startsWith('《') || reply.match(/^[《"]|有言|云：/)) {
+        // 后处理：强制去掉文言开头
+        if (reply.startsWith('《') || reply.match(/有言|古人云/)) {
             const lines = reply.split('\n');
-            if (lines.length > 1) {
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].startsWith('《') && lines[i].length > 5) {
-                        reply = lines[i] + '\n' + lines.slice(i+1).join('\n');
-                        break;
-                    }
-                }
+            const cleanLines = lines.filter(line => !line.startsWith('《') && !line.match(/有言|古人云/));
+            if (cleanLines.length > 0) {
+                reply = cleanLines.join('\n');
             }
         }
 
