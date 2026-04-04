@@ -57,7 +57,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${process.env.ZHIPU_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'glm-3-turbo',  // 换成更听话的模型
+                model: 'glm-4-flash',
                 messages: messages,
                 temperature: 0.95,
                 max_tokens: 400,
@@ -76,14 +76,8 @@ export default async function handler(req, res) {
         const data = await response.json();
         let reply = data.choices[0].message.content;
 
-        // 后处理：强制去掉文言开头
-        if (reply.startsWith('《') || reply.match(/有言|古人云/)) {
-            const lines = reply.split('\n');
-            const cleanLines = lines.filter(line => !line.startsWith('《') && !line.match(/有言|古人云/));
-            if (cleanLines.length > 0) {
-                reply = cleanLines.join('\n');
-            }
-        }
+        // 强力后处理：删除所有文言痕迹
+        reply = cleanWenyan(reply);
 
         res.status(200).json({
             success: true,
@@ -97,4 +91,42 @@ export default async function handler(req, res) {
             error: '服务器错误，请稍后再试'
         });
     }
+}
+
+/**
+ * 强力清洗文言文痕迹
+ */
+function cleanWenyan(reply) {
+    // 1. 按行分割
+    let lines = reply.split('\n');
+
+    // 2. 过滤掉文言句子
+    lines = lines.filter(line => {
+        // 空行保留
+        if (!line.trim()) return true;
+
+        // 删除以《》开头的句子
+        if (line.trim().startsWith('《')) return false;
+
+        // 删除包含"有言"、"古人云"、"有云"的句子
+        if (line.match(/有言|古人云|有云/)) return false;
+
+        // 删除整句都在引用的（包含多个《》）
+        if ((line.match(/《/g) || []).length >= 2) return false;
+
+        return true;
+    });
+
+    // 3. 重新组合
+    let cleaned = lines.join('\n');
+
+    // 4. 清理多余空行
+    cleaned = cleaned.replace(/\n{3,}/g, '\n\n').trim();
+
+    // 5. 如果清洗后太短（<50字），使用预设回答
+    if (cleaned.length < 50) {
+        return '这个问题，最好的办法是换个角度想想。\n\n具体来说：\n1. 先搞清楚真正的问题在哪\n2. 找到你能控制的部分\n3. 一步一步来，别急\n\n时间会给你答案。';
+    }
+
+    return cleaned;
 }
