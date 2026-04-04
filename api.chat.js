@@ -1,4 +1,4 @@
-const API_URL = 'https://api.deepseek.com/chat/completions';
+const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -48,10 +48,10 @@ export default async function handler(req, res) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`
+                'Authorization': `Bearer ${process.env.ZHIPU_API_KEY}`
             },
             body: JSON.stringify({
-                model: 'deepseek-chat',
+                model: 'glm-4-flash',
                 messages: messages,
                 temperature: 0.8,
                 max_tokens: 800,
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error('DeepSeek API Error:', errorData);
+            console.error('智谱AI API Error:', errorData);
             return res.status(response.status).json({
                 error: 'AI服务暂时不可用，请稍后再试'
             });
