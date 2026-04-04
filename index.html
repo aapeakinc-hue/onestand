@@ -36,69 +36,107 @@
         .header {
             background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%);
             color: white;
-            padding: 32px 40px;
+            padding: 28px 40px;
             text-align: center;
             flex-shrink: 0;
         }
 
         .header h1 {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 500;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: 4px;
         }
 
         .header p {
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0.95;
             font-weight: 300;
         }
 
-        .category-selector {
+        /* 一级分类 */
+        .main-categories {
             display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 24px 32px;
-            border-bottom: 1px solid #f0f0f0;
-            justify-content: center;
-            flex-shrink: 0;
+            gap: 0;
+            padding: 0;
             background: #fafbfc;
+            border-bottom: 1px solid #f0f0f0;
+            overflow-x: auto;
+            flex-shrink: 0;
         }
 
-        .category-btn {
-            padding: 8px 20px;
-            border: 1px solid #e0e6ed;
-            background: white;
+        .main-category {
+            padding: 14px 24px;
+            background: transparent;
             color: #5a6d82;
-            border-radius: 20px;
+            border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            font-weight: 400;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+
+        .main-category:hover {
+            color: #4A90E2;
+            background: white;
+        }
+
+        .main-category.active {
+            color: #4A90E2;
+            background: white;
+            border-bottom-color: #4A90E2;
+            font-weight: 500;
+        }
+
+        /* 二级分类 */
+        .sub-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            justify-content: flex-start;
+            flex-shrink: 0;
+            background: white;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .sub-category {
+            padding: 6px 16px;
+            border: 1px solid #e0e6ed;
+            background: #fafbfc;
+            color: #5a6d82;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 13px;
             transition: all 0.2s ease;
             font-weight: 400;
         }
 
-        .category-btn:hover {
-            background: #f8f9fa;
+        .sub-category:hover {
+            background: white;
             border-color: #4A90E2;
             color: #4A90E2;
         }
 
-        .category-btn.active {
-            background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%);
+        .sub-category.active {
+            background: #4A90E2;
             color: white;
             border-color: #4A90E2;
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
         }
 
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 28px 32px;
+            padding: 24px;
             background: #fafbfc;
         }
 
         .message {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: flex-start;
             animation: fadeIn 0.3s ease;
@@ -121,11 +159,11 @@
 
         .message-content {
             max-width: 65%;
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: 16px;
             line-height: 1.7;
             white-space: pre-wrap;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .message.user .message-content {
@@ -144,7 +182,7 @@
         }
 
         .input-container {
-            padding: 20px 32px;
+            padding: 16px 24px;
             border-top: 1px solid #f0f0f0;
             flex-shrink: 0;
             background: white;
@@ -152,16 +190,16 @@
 
         .input-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
         input[type="text"] {
             flex: 1;
-            padding: 14px 20px;
+            padding: 12px 18px;
             border: 1px solid #e0e6ed;
             border-radius: 24px;
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             transition: all 0.2s ease;
             background: #fafbfc;
@@ -178,12 +216,12 @@
         }
 
         button.send-btn {
-            padding: 14px 32px;
+            padding: 12px 28px;
             background: linear-gradient(135deg, #4A90E2 0%, #5BA0F2 100%);
             color: white;
             border: none;
             border-radius: 24px;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: 500;
@@ -209,17 +247,17 @@
         .typing {
             display: flex;
             gap: 6px;
-            padding: 14px 18px;
+            padding: 12px 16px;
             background: white;
             border-radius: 16px;
             border: 1px solid #eef1f5;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            max-width: 80px;
+            max-width: 70px;
         }
 
         .typing span {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: #4A90E2;
             border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out;
@@ -235,29 +273,32 @@
 
         .footer {
             text-align: center;
-            padding: 12px;
+            padding: 10px;
             color: #a0aec0;
-            font-size: 12px;
+            font-size: 11px;
             flex-shrink: 0;
             background: white;
         }
 
         /* 滚动条美化 */
-        .chat-container::-webkit-scrollbar {
-            width: 6px;
+        .chat-container::-webkit-scrollbar,
+        .sub-categories::-webkit-scrollbar,
+        .main-categories::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
         }
 
-        .chat-container::-webkit-scrollbar-track {
+        .chat-container::-webkit-scrollbar-track,
+        .sub-categories::-webkit-scrollbar-track,
+        .main-categories::-webkit-scrollbar-track {
             background: transparent;
         }
 
-        .chat-container::-webkit-scrollbar-thumb {
+        .chat-container::-webkit-scrollbar-thumb,
+        .sub-categories::-webkit-scrollbar-thumb,
+        .main-categories::-webkit-scrollbar-thumb {
             background: #d0d7de;
-            border-radius: 3px;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb:hover {
-            background: #b0b7be;
+            border-radius: 2px;
         }
 
         /* 移动端适配 */
@@ -272,45 +313,55 @@
             }
 
             .header {
-                padding: 24px 20px;
+                padding: 20px 16px;
             }
 
             .header h1 {
-                font-size: 32px;
+                font-size: 28px;
             }
 
-            .category-selector {
-                padding: 16px 20px;
+            .main-categories {
+                padding: 0;
+            }
+
+            .main-category {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .sub-categories {
+                padding: 12px 16px;
                 gap: 8px;
+                max-height: 100px;
             }
 
-            .category-btn {
-                padding: 6px 14px;
-                font-size: 13px;
+            .sub-category {
+                padding: 5px 12px;
+                font-size: 12px;
             }
 
             .chat-container {
-                padding: 20px;
+                padding: 16px;
             }
 
             .message-content {
                 max-width: 80%;
-                padding: 12px 16px;
-                font-size: 14px;
+                padding: 10px 14px;
+                font-size: 13px;
             }
 
             .input-container {
-                padding: 16px 20px;
+                padding: 12px 16px;
             }
 
             input[type="text"] {
-                padding: 12px 16px;
-                font-size: 14px;
+                padding: 10px 14px;
+                font-size: 13px;
             }
 
             button.send-btn {
-                padding: 12px 24px;
-                font-size: 14px;
+                padding: 10px 20px;
+                font-size: 13px;
             }
         }
     </style>
@@ -322,19 +373,25 @@
             <p>人生智慧 · 一弭化解</p>
         </div>
 
-        <div class="category-selector">
-            <button class="category-btn active" data-category="general">全部</button>
-            <button class="category-btn" data-category="workplace">职场智慧</button>
-            <button class="category-btn" data-category="relationship">人际关系</button>
-            <button class="category-btn" data-category="emotion">情感困扰</button>
-            <button class="category-btn" data-category="direction">人生方向</button>
-            <button class="category-btn" data-category="mood">情绪管理</button>
-            <button class="category-btn" data-category="family">家庭关系</button>
+        <!-- 一级分类 -->
+        <div class="main-categories" id="mainCategories">
+            <button class="main-category active" data-category="workplace">职场事业</button>
+            <button class="main-category" data-category="social">人际交往</button>
+            <button class="main-category" data-category="love">情感婚恋</button>
+            <button class="main-category" data-category="family">家庭关系</button>
+            <button class="main-category" data-category="life">人生规划</button>
+            <button class="main-category" data-category="mental">心理调适</button>
+            <button class="main-category" data-category="growth">自我提升</button>
+        </div>
+
+        <!-- 二级分类 -->
+        <div class="sub-categories" id="subCategories">
+            <!-- 动态加载 -->
         </div>
 
         <div class="chat-container" id="chatContainer">
             <div class="message assistant">
-                <div class="message-content">你好，我是一弭。有什么困惑，尽管说出来。</div>
+                <div class="message-content">你好，我是一弭。选择一个分类，说说你的困惑。</div>
             </div>
         </div>
 
@@ -351,16 +408,129 @@
     </div>
 
     <script>
-        let currentCategory = 'general';
+        // 分类配置
+        const CATEGORIES = {
+            workplace: {
+                name: '职场事业',
+                subs: [
+                    { id: 'workplace-conflict', name: '职场人际关系' },
+                    { id: 'career-plan', name: '职业发展规划' },
+                    { id: 'work-pressure', name: '工作压力应对' },
+                    { id: 'job-hop', name: '跳槽转型决策' },
+                    { id: 'startup', name: '创业管理难题' },
+                    { id: 'promotion', name: '职场晋升策略' }
+                ]
+            },
+            social: {
+                name: '人际交往',
+                subs: [
+                    { id: 'social-anxiety', name: '社交恐惧克服' },
+                    { id: 'friendship', name: '朋友相处之道' },
+                    { id: 'business-social', name: '商务社交技巧' },
+                    { id: 'opposite-sex', name: '异性交往困扰' },
+                    { id: 'stranger', name: '陌生人沟通' },
+                    { id: 'conflict', name: '冲突化解之道' }
+                ]
+            },
+            love: {
+                name: '情感婚恋',
+                subs: [
+                    { id: 'dating', name: '恋爱相处技巧' },
+                    { id: 'breakup', name: '分手情感修复' },
+                    { id: 'marriage', name: '婚姻经营之道' },
+                    { id: 'cheating', name: '出轨背叛处理' },
+                    { id: 'single', name: '单身脱单困扰' },
+                    { id: 'ex', name: '前任情感纠葛' }
+                ]
+            },
+            family: {
+                name: '家庭关系',
+                subs: [
+                    { id: 'mother-in-law', name: '婆媳矛盾化解' },
+                    { id: 'parenting', name: '亲子教育问题' },
+                    { id: 'parents', name: '父母相处之道' },
+                    { id: 'sibling', name: '兄弟姐妹关系' },
+                    { id: 'in-laws', name: '姻亲关系处理' },
+                    { id: 'elderly', name: '养老照顾难题' }
+                ]
+            },
+            life: {
+                name: '人生规划',
+                subs: [
+                    { id: 'direction', name: '人生方向迷茫' },
+                    { id: 'choice', name: '选择困难决策' },
+                    { id: 'meaning', name: '人生意义探寻' },
+                    { id: 'goal', name: '目标设定执行' },
+                    { id: 'balance', name: '工作生活平衡' },
+                    { id: 'midlife', name: '中年危机应对' }
+                ]
+            },
+            mental: {
+                name: '心理调适',
+                subs: [
+                    { id: 'anxiety', name: '焦虑情绪调节' },
+                    { id: 'depression', name: '抑郁情绪应对' },
+                    { id: 'stress', name: '压力释放技巧' },
+                    { id: 'insomnia', name: '失眠困扰解决' },
+                    { id: 'self-doubt', name: '自我怀疑克服' },
+                    { id: 'trauma', name: '心理创伤修复' }
+                ]
+            },
+            growth: {
+                name: '自我提升',
+                subs: [
+                    { id: 'confidence', name: '自信心建立' },
+                    { id: 'habits', name: '好习惯养成' },
+                    { id: 'learning', name: '学习方法优化' },
+                    { id: 'time-manage', name: '时间管理技巧' },
+                    { id: 'emotion-control', name: '情绪管理能力' },
+                    { id: 'charisma', name: '个人魅力提升' }
+                ]
+            }
+        };
+
+        let currentMainCategory = 'workplace';
+        let currentSubCategory = CATEGORIES.workplace.subs[0].id;
         let history = [];
 
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentCategory = this.dataset.category;
+        // 初始化
+        function init() {
+            renderSubCategories(currentMainCategory);
+
+            // 一级分类点击
+            document.querySelectorAll('.main-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.main-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMainCategory = this.dataset.category;
+                    renderSubCategories(currentMainCategory);
+                });
             });
-        });
+        }
+
+        // 渲染二级分类
+        function renderSubCategories(mainCategory) {
+            const container = document.getElementById('subCategories');
+            const category = CATEGORIES[mainCategory];
+
+            container.innerHTML = category.subs.map((sub, index) => `
+                <button class="sub-category ${index === 0 ? 'active' : ''}" data-id="${sub.id}">
+                    ${sub.name}
+                </button>
+            `).join('');
+
+            // 默认选中第一个
+            currentSubCategory = category.subs[0].id;
+
+            // 绑定点击事件
+            container.querySelectorAll('.sub-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    container.querySelectorAll('.sub-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSubCategory = this.dataset.id;
+                });
+            });
+        }
 
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -409,7 +579,7 @@
                     },
                     body: JSON.stringify({
                         message: message,
-                        category: currentCategory,
+                        category: currentSubCategory,
                         history: history.slice(-4)
                     })
                 });
@@ -438,6 +608,9 @@
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendMessage();
         });
+
+        // 启动
+        init();
     </script>
 </body>
 </html>
