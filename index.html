@@ -51,21 +51,12 @@
             border-radius: 8px;
         }
 
-        .header h1 {
-            font-size: 32px;
-            font-weight: 400;
-            margin-bottom: 4px;
-            letter-spacing: 8px;
-            font-family: "LXGW WenKai", "STLiti", "隶书", serif;
-            color: #8b4413;
-        }
-
         .header p {
-            font-size: 13px;
-            opacity: 0.7;
-            font-weight: 300;
-            letter-spacing: 2px;
-            color: #a08060;
+            font-size: 28px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: #8b4413;
+            font-family: "LXGW WenKai", "STLiti", "隶书", serif;
         }
 
         /* 一级分类 */
@@ -339,8 +330,8 @@
                 height: 56px;
             }
 
-            .header h1 {
-                font-size: 28px;
+            .header p {
+                font-size: 24px;
             }
 
             .main-categories {
@@ -394,7 +385,6 @@
     <div class="container">
         <div class="header">
             <img src="logo.jpg" alt="一弭" class="logo" />
-            <h1>一弭</h1>
             <p>人生智慧 · 一弭化解</p>
         </div>
 
@@ -520,10 +510,8 @@
 
         // 初始化
         function init() {
-            // 渲染初始二级分类
             renderSubCategories('workplace');
 
-            // 一级分类点击事件
             document.querySelectorAll('.main-category').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.main-category').forEach(b => b.classList.remove('active'));
