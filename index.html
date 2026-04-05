@@ -40,6 +40,7 @@
             background: linear-gradient(135deg, #fffef9 0%, #f8f4ed 100%);
             border-bottom: 1px solid #e8e0d5;
             flex-shrink: 0;
+            position: relative;
         }
 
         .logo {
@@ -277,12 +278,7 @@
             display: flex;
             gap: 8px;
             margin-top: 8px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
+            flex-wrap: wrap;
         }
 
         .action-btn {
@@ -315,6 +311,108 @@
             background: #f5a623;
             color: #fff;
             border-color: #f5a623;
+        }
+
+        .action-btn.liked {
+            background: #4a9;
+            color: #fff;
+            border-color: #4a9;
+        }
+
+        .action-btn.disliked {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+
+        /* 反馈区域 */
+        .feedback-section {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: #faf8f5;
+            border-radius: 12px;
+            border: 1px solid #e8e0d5;
+            max-width: 70%;
+        }
+
+        .feedback-section.show {
+            display: block;
+        }
+
+        .feedback-title {
+            font-size: 12px;
+            color: #8b7355;
+            margin-bottom: 10px;
+        }
+
+        .feedback-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .feedback-tag {
+            padding: 4px 10px;
+            background: #fff;
+            border: 1px solid #e8e0d5;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #8b7355;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-tag:hover,
+        .feedback-tag.selected {
+            background: #8b4413;
+            color: #fff;
+            border-color: #8b4413;
+        }
+
+        .feedback-input {
+            display: flex;
+            gap: 8px;
+        }
+
+        .feedback-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #e8e0d5;
+            border-radius: 16px;
+            font-size: 12px;
+            outline: none;
+            background: #fff;
+        }
+
+        .feedback-input input:focus {
+            border-color: #8b4413;
+        }
+
+        .feedback-submit {
+            padding: 8px 16px;
+            background: #8b4413;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-submit:hover {
+            background: #a0522d;
+        }
+
+        .feedback-thanks {
+            font-size: 12px;
+            color: #4a9;
+            display: none;
+        }
+
+        .feedback-thanks.show {
+            display: block;
         }
 
         /* 底部输入区域 */
@@ -853,8 +951,8 @@
                 font-size: 14px;
             }
 
-            .message-actions {
-                opacity: 1;
+            .feedback-section {
+                max-width: 85%;
             }
 
             .input-area {
@@ -892,7 +990,7 @@
 <body>
     <div class="container">
         <!-- 顶部标题栏 -->
-        <div class="header" style="position: relative;">
+        <div class="header">
             <img src="logo.jpg" alt="一弭" class="logo" />
             <span class="header-text">人生智慧 · 一弭化解</span>
             <div class="header-actions">
@@ -1062,13 +1160,26 @@
             }
         };
 
+        // 反馈标签
+        const FEEDBACK_TAGS = [
+            { id: 'too-long', label: '太长' },
+            { id: 'too-short', label: '太短' },
+            { id: 'too-deep', label: '太深奥' },
+            { id: 'too-simple', label: '太浅显' },
+            { id: 'off-topic', label: '答非所问' },
+            { id: 'not-specific', label: '不够具体' },
+            { id: 'not-practical', label: '不够实用' },
+            { id: 'other', label: '其他问题' }
+        ];
+
         let currentMainCategory = 'workplace';
         let currentSubCategory = 'workplace-conflict';
         let history = [];
-        let conversations = []; // 对话历史
-        let favorites = []; // 收藏列表
-        let currentTab = 'history'; // 当前标签页
-        let recognition = null; // 语音识别
+        let conversations = [];
+        let favorites = [];
+        let feedbacks = [];
+        let currentTab = 'history';
+        let recognition = null;
 
         // 初始化
         function init() {
@@ -1086,12 +1197,13 @@
                 });
             });
 
-            // 历史按钮
             document.getElementById('historyBtn').addEventListener('click', openHistorySidebar);
             document.getElementById('historyClose').addEventListener('click', closeHistorySidebar);
-            document.getElementById('overlay').addEventListener('click', closeHistorySidebar);
+            document.getElementById('overlay').addEventListener('click', function() {
+                closeHistorySidebar();
+                closeShareModal();
+            });
 
-            // 历史标签页
             document.querySelectorAll('.history-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
@@ -1101,37 +1213,43 @@
                 });
             });
 
-            // 分享弹窗
             document.getElementById('shareModalClose').addEventListener('click', closeShareModal);
-            document.getElementById('overlay').addEventListener('click', closeShareModal);
             document.getElementById('copyShareBtn').addEventListener('click', copyShareText);
             document.getElementById('saveShareBtn').addEventListener('click', saveShareImage);
 
-            // 语音输入
             initVoiceRecognition();
         }
 
         // 本地存储
         function loadFromStorage() {
-            const savedConversations = localStorage.getItem('yimi_conversations');
-            const savedFavorites = localStorage.getItem('yimi_favorites');
-            if (savedConversations) conversations = JSON.parse(savedConversations);
-            if (savedFavorites) favorites = JSON.parse(savedFavorites);
+            try {
+                const savedConversations = localStorage.getItem('yimi_conversations');
+                const savedFavorites = localStorage.getItem('yimi_favorites');
+                const savedFeedbacks = localStorage.getItem('yimi_feedbacks');
+                if (savedConversations) conversations = JSON.parse(savedConversations);
+                if (savedFavorites) favorites = JSON.parse(savedFavorites);
+                if (savedFeedbacks) feedbacks = JSON.parse(savedFeedbacks);
+            } catch (e) {
+                console.error('加载存储失败', e);
+            }
         }
 
         function saveToStorage() {
-            localStorage.setItem('yimi_conversations', JSON.stringify(conversations));
-            localStorage.setItem('yimi_favorites', JSON.stringify(favorites));
+            try {
+                localStorage.setItem('yimi_conversations', JSON.stringify(conversations));
+                localStorage.setItem('yimi_favorites', JSON.stringify(favorites));
+                localStorage.setItem('yimi_feedbacks', JSON.stringify(feedbacks));
+            } catch (e) {
+                console.error('保存存储失败', e);
+            }
         }
 
-        // 更新分类显示
         function updateCategoryDisplay() {
             const main = CATEGORIES[currentMainCategory];
             const sub = main.subs.find(s => s.id === currentSubCategory);
             document.getElementById('categoryText').textContent = `${main.name} · ${sub ? sub.name : ''}`;
         }
 
-        // 渲染二级分类
         function renderSubCategories(mainCategory) {
             const container = document.getElementById('subCategories');
             const category = CATEGORIES[mainCategory];
@@ -1156,7 +1274,6 @@
             });
         }
 
-        // 渲染推荐问题
         function renderQuestions(sub) {
             const container = document.getElementById('suggestedQuestions');
             if (!sub || !sub.questions) { container.innerHTML = ''; return; }
@@ -1170,7 +1287,6 @@
             });
         }
 
-        // 消息相关
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const chatContainer = document.getElementById('chatContainer');
@@ -1188,6 +1304,21 @@
                         <button class="action-btn" onclick="copyMessage('${messageId}', this)">复制</button>
                         <button class="action-btn" onclick="favoriteMessage('${messageId}', this)">收藏</button>
                         <button class="action-btn" onclick="shareMessage('${messageId}', this)">分享</button>
+                        <button class="action-btn" onclick="toggleFeedback('${messageId}', 'like', this)">👍 有帮助</button>
+                        <button class="action-btn" onclick="toggleFeedback('${messageId}', 'dislike', this)">👍 没帮助</button>
+                    </div>
+                    <div class="feedback-section" id="feedback-${messageId}">
+                        <div class="feedback-title">请告诉我们哪里需要改进：</div>
+                        <div class="feedback-tags">
+                            ${FEEDBACK_TAGS.map(tag => 
+                                `<button class="feedback-tag" data-tag="${tag.id}" onclick="selectFeedbackTag('${messageId}', '${tag.id}', this)">${tag.label}</button>`
+                            ).join('')}
+                        </div>
+                        <div class="feedback-input">
+                            <input type="text" placeholder="其他建议..." id="feedback-input-${messageId}" />
+                            <button class="feedback-submit" onclick="submitFeedback('${messageId}')">提交</button>
+                        </div>
+                        <div class="feedback-thanks" id="feedback-thanks-${messageId}">感谢您的反馈，我们会持续改进！</div>
                     </div>
                 `;
             } else {
@@ -1254,7 +1385,6 @@
             const messageDiv = document.querySelector(`.message[data-id="${messageId}"]`);
             const answerContent = messageDiv.querySelector('.message-content').textContent;
             
-            // 找到对应的问题
             let questionContent = '';
             const prevMessage = messageDiv.previousElementSibling;
             if (prevMessage && prevMessage.classList.contains('user')) {
@@ -1275,13 +1405,13 @@
 
         function closeShareModal() {
             document.getElementById('shareModal').classList.remove('show');
-            document.getElementById('overlay').classList.remove('show');
         }
 
         function copyShareText() {
             const text = `【一弭 · 人生智慧】\n\n问：${currentShareData.question}\n\n答：${currentShareData.answer}\n\n—— onestand.cn`;
             navigator.clipboard.writeText(text).then(() => {
                 showToast('已复制到剪贴板');
+                closeShareModal();
             });
         }
 
@@ -1290,7 +1420,106 @@
             closeShareModal();
         }
 
-        // 历史记录侧边栏
+        // 反馈功能
+        function toggleFeedback(messageId, type, btn) {
+            const feedbackSection = document.getElementById(`feedback-${messageId}`);
+            const allBtns = btn.parentElement.querySelectorAll('.action-btn');
+            
+            // 重置所有按钮
+            allBtns.forEach(b => {
+                if (b.textContent.includes('有帮助') || b.textContent.includes('没帮助')) {
+                    b.classList.remove('liked', 'disliked');
+                }
+            });
+            
+            if (type === 'like') {
+                btn.classList.add('liked');
+                // 直接提交正面反馈
+                saveFeedback(messageId, { rating: 'positive' });
+                showToast('感谢您的认可！');
+            } else {
+                btn.classList.add('disliked');
+                // 显示详细反馈表单
+                feedbackSection.classList.add('show');
+            }
+        }
+
+        function selectFeedbackTag(messageId, tagId, btn) {
+            btn.classList.toggle('selected');
+        }
+
+        function submitFeedback(messageId) {
+            const feedbackSection = document.getElementById(`feedback-${messageId}`);
+            const selectedTags = feedbackSection.querySelectorAll('.feedback-tag.selected');
+            const input = document.getElementById(`feedback-input-${messageId}`);
+            
+            const tags = Array.from(selectedTags).map(t => t.dataset.tag);
+            const comment = input.value.trim();
+            
+            if (tags.length === 0 && !comment) {
+                showToast('请选择问题标签或输入建议');
+                return;
+            }
+            
+            const feedback = {
+                id: Date.now(),
+                messageId: messageId,
+                rating: 'negative',
+                tags: tags,
+                comment: comment,
+                time: new Date().toLocaleString('zh-CN')
+            };
+            
+            saveFeedback(messageId, feedback);
+            
+            // 显示感谢信息
+            feedbackSection.querySelector('.feedback-input').style.display = 'none';
+            feedbackSection.querySelector('.feedback-tags').style.display = 'none';
+            feedbackSection.querySelector('.feedback-title').style.display = 'none';
+            document.getElementById(`feedback-thanks-${messageId}`).classList.add('show');
+            
+            showToast('感谢您的反馈！');
+        }
+
+        function saveFeedback(messageId, feedback) {
+            // 获取对应的问题和回答
+            const messageDiv = document.querySelector(`.message[data-id="${messageId}"]`);
+            const answer = messageDiv.querySelector('.message-content').textContent;
+            
+            let question = '';
+            const prevMessage = messageDiv.previousElementSibling;
+            if (prevMessage && prevMessage.classList.contains('user')) {
+                question = prevMessage.querySelector('.message-content').textContent;
+            }
+            
+            const fullFeedback = {
+                ...feedback,
+                question: question,
+                answer: answer,
+                category: currentSubCategory
+            };
+            
+            feedbacks.unshift(fullFeedback);
+            saveToStorage();
+            
+            // 发送到服务器（可选）
+            sendFeedbackToServer(fullFeedback);
+        }
+
+        async function sendFeedbackToServer(feedback) {
+            try {
+                await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(feedback)
+                });
+            } catch (e) {
+                // 静默失败，不影响用户体验
+                console.log('反馈上传失败', e);
+            }
+        }
+
+        // 历史记录
         function openHistorySidebar() {
             document.getElementById('historySidebar').classList.add('open');
             document.getElementById('overlay').classList.add('show');
@@ -1340,7 +1569,6 @@
             showToast('已删除');
         }
 
-        // Toast提示
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -1370,7 +1598,6 @@
                 if (data.success) {
                     const answerId = addMessage('assistant', data.reply);
                     
-                    // 保存到历史
                     const conversation = {
                         id: answerId,
                         question: message,
@@ -1379,7 +1606,7 @@
                         time: new Date().toLocaleString('zh-CN')
                     };
                     conversations.unshift(conversation);
-                    if (conversations.length > 50) conversations.pop(); // 最多保存50条
+                    if (conversations.length > 50) conversations.pop();
                     saveToStorage();
                     
                     history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
