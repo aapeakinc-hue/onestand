@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>    
-    <meta charset="UTF-8">    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一弭 - 人生智慧指引</title>
     
     <!-- 百度统计 -->
@@ -11,21 +11,21 @@
     (function() {
       var hm = document.createElement("script");
       hm.src = "https://hm.baidu.com/hm.js?3012fd8942ed238a0217a8843b019f7e";
-      var s = document.getElementsByTagName("script")[0]; 
+      var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(hm, s);
     })();
     </script>
     
     <style>
-        * {            
-            margin: 0;            
-            padding: 0;            
-            box-sizing: border-box;        
- }
-        html, body {            
-            height: 100%;            
-            overflow: hidden;        
- }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
         body {
             font-family: "LXGW WenKai", "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
             background: #f5f3f0;
@@ -53,6 +53,13 @@
             width: 48px;
             height: 48px;
             border-radius: 8px;
+            background: #8b4413;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
         }
         .header-text {
             font-size: 26px;
@@ -449,10 +456,11 @@
             color: #fff;
             border-color: #8b4413;
             animation: pulse 1s infinite;
+            transform: scale(1.1);
         }
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.2); }
         }
         button.send-btn {
             padding: 14px 32px;
@@ -699,6 +707,12 @@
             width: 32px;
             height: 32px;
             border-radius: 6px;
+            background: #8b4413;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
         }
         .share-card-brand {
             font-size: 16px;
@@ -799,6 +813,7 @@
             .logo {
                 width: 40px;
                 height: 40px;
+                font-size: 16px;
             }
             .header-text {
                 font-size: 22px;
@@ -866,7 +881,7 @@
     <div class="container">
         <!-- 顶部标题栏 -->
         <div class="header" style="position: relative;">
-            <img src="logo.jpg" alt="一弭" class="logo" />
+            <div class="logo">弭</div>
             <span class="header-text">人生智慧 · 一弭化解</span>
             <div class="header-actions">
                 <button class="header-btn" id="historyBtn">历史</button>
@@ -937,7 +952,7 @@
         </div>
         <div class="share-card" id="shareCard">
             <div class="share-card-header">
-                <img src="logo.jpg" alt="一弭" class="share-card-logo" />
+                <div class="share-card-logo">弭</div>
                 <span class="share-card-brand">一弭 · 人生智慧</span>
             </div>
             <div class="share-card-question" id="shareQuestion"></div>
@@ -1180,7 +1195,7 @@
                         <button class="action-btn" onclick="favoriteMessage('${messageId}', this)">收藏</button>
                         <button class="action-btn" onclick="shareMessage('${messageId}', this)">分享</button>
                         <button class="action-btn" onclick="toggleFeedback('${messageId}', 'like', this)">👍 有帮助</button>
-                        <button class="action-btn" onclick="toggleFeedback('${messageId}', 'dislike', this)">👍 没帮助</button>
+                        <button class="action-btn" onclick="toggleFeedback('${messageId}', 'dislike', this)">👎 没帮助</button>
                     </div>
                     <div class="feedback-section" id="feedback-${messageId}">
                         <div class="feedback-title">请告诉我们哪里需要改进：</div>
@@ -1492,41 +1507,85 @@
         // 语音识别
         function initVoiceRecognition() {
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                console.log('浏览器不支持语音识别');
                 document.getElementById('voiceBtn').style.display = 'none';
                 return;
             }
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'zh-CN';
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                
+                // 配置识别参数
+                recognition.lang = 'zh-CN';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
 
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
-                userInput.focus();
-            };
+                // 识别成功
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    userInput.value = transcript;
+                    userInput.focus();
+                    showToast('识别成功');
+                };
 
-            recognition.onerror = function(event) {
-                showToast('语音识别失败，请重试');
-                document.getElementById('voiceBtn').classList.remove('recording');
-            };
+                // 识别错误
+                recognition.onerror = function(event) {
+                    console.error('语音识别错误:', event.error);
+                    let errorMsg = '语音识别失败';
+                    
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMsg = '未检测到语音，请重试';
+                            break;
+                        case 'audio-capture':
+                            errorMsg = '无法访问麦克风';
+                            break;
+                        case 'not-allowed':
+                            errorMsg = '麦克风权限被拒绝';
+                            break;
+                        case 'network':
+                            errorMsg = '网络错误，请检查连接';
+                            break;
+                    }
+                    
+                    showToast(errorMsg);
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                };
 
-            recognition.onend = function() {
-                document.getElementById('voiceBtn').classList.remove('recording');
-            };
+                // 识别结束
+                recognition.onend = function() {
+                    document.getElementById('voiceBtn').classList.remove('recording');
+                };
 
-            document.getElementById('voiceBtn').addEventListener('click', function() {
-                if (this.classList.contains('recording')) {
-                    recognition.stop();
-                    this.classList.remove('recording');
-                } else {
-                    recognition.start();
-                    this.classList.add('recording');
+                // 识别开始
+                recognition.onstart = function() {
                     showToast('正在聆听...');
-                }
-            });
+                };
+
+                // 绑定按钮点击事件
+                document.getElementById('voiceBtn').addEventListener('click', function() {
+                    if (this.classList.contains('recording')) {
+                        // 停止识别
+                        recognition.stop();
+                        this.classList.remove('recording');
+                    } else {
+                        // 开始识别
+                        try {
+                            recognition.start();
+                            this.classList.add('recording');
+                        } catch (error) {
+                            console.error('启动语音识别失败:', error);
+                            showToast('语音识别启动失败，请重试');
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('初始化语音识别失败:', error);
+                document.getElementById('voiceBtn').style.display = 'none';
+            }
         }
 
         sendBtn.addEventListener('click', sendMessage);
