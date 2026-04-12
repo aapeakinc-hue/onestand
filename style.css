@@ -42,13 +42,17 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 8px;
-    background: #8b4413;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
+    overflow: hidden;
+    background: transparent;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .header-text {
@@ -587,6 +591,7 @@ input[type="text"]::placeholder {
 
 .typing span:nth-child(1) { animation-delay: -0.32s; }
 .typing span:nth-child(2) { animation-delay: -0.16s; }
+
 @keyframes bounce {
     0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
     40% { transform: scale(1); opacity: 1; }
@@ -608,3 +613,61 @@ input[type="text"]::placeholder {
     }
     .logo {
         width: 40px;
+        height: 40px;
+    }
+    .header-text {
+        font-size: 22px;
+        letter-spacing: 3px;
+    }
+    .main-category {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    .sub-categories {
+        padding: 10px 16px 6px;
+        gap: 8px;
+    }
+    .sub-category {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    .suggested-questions {
+        padding: 0 16px 10px;
+        gap: 6px;
+    }
+    .suggested-question {
+        padding: 4px 10px;
+        font-size: 11px;
+    }
+    .chat-container {
+        padding: 16px 20px;
+    }
+    .message-content {
+        max-width: 85%;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    .feedback-section {
+        max-width: 85%;
+    }
+    .input-area {
+        padding: 12px 16px 16px;
+    }
+    .current-category {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+    input[type="text"] {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    .voice-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    .send-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+}
