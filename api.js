@@ -4,7 +4,7 @@
 const API_CONFIG = {
     // 通义千问API配置
     baseUrl: 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
-    apiKey: 'YOUR_API_KEY', // 替换为你的真实API Key
+    apiKey: 'sk-b5a2b8e84714428bb0e6d8ee5bd0a69a', // 替换为你的真实API Key
     model: 'qwen-turbo'
 };
 
