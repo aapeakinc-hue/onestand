@@ -4,37 +4,505 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一弭 - 人生智慧指引</title>
-    
-    <!-- 百度统计 -->
     <script>
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?3012fd8942ed238a0217a8843b019f7e";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-    </script>
-    
-    <!-- 样式 -->
-    <link rel="stylesheet" href="style.css">
-    <!-- 字体 -->
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?3012fd8942ed238a0217a8843b019f7e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: "LXGW WenKai", "PingFang SC", "Microsoft YaHei", -apple-system, sans-serif;
+            background: #f5f3f0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #fffef9;
+        }
+
+        /* 顶部标题栏 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px 32px;
+            background: linear-gradient(135deg, #fffef9 0%, #f8f4ed 100%);
+            border-bottom: 1px solid #e8e0d5;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+        }
+
+        .header-text {
+            font-size: 26px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: #8b4413;
+            font-family: "LXGW WenKai", "STLiti", "隶书", serif;
+        }
+
+        /* 一级分类 - 横向滚动 */
+        .main-categories {
+            display: flex;
+            gap: 0;
+            background: #f8f4ed;
+            border-bottom: 1px solid #e8e0d5;
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .main-categories::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .main-category {
+            padding: 14px 28px;
+            background: transparent;
+            color: #8b7355;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            font-weight: 400;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .main-category:hover {
+            color: #8b4413;
+            background: #fffef9;
+        }
+
+        .main-category.active {
+            color: #8b4413;
+            background: #fffef9;
+            border-bottom-color: #8b4413;
+            font-weight: 500;
+        }
+
+        /* 二级分类 + 推荐问题 - 合并区域 */
+        .category-section {
+            display: flex;
+            flex-direction: column;
+            background: #fffef9;
+            border-bottom: 1px solid #e8e0d5;
+            flex-shrink: 0;
+            max-height: 120px;
+            overflow: hidden;
+        }
+
+        .sub-categories {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 10px;
+            padding: 12px 24px 8px;
+            overflow-x: auto;
+        }
+
+        .sub-categories::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .sub-category {
+            padding: 6px 16px;
+            border: 1px solid #d8cdb8;
+            background: #faf8f5;
+            color: #8b7355;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .sub-category:hover {
+            background: #fff;
+            border-color: #8b4413;
+            color: #8b4413;
+        }
+
+        .sub-category.active {
+            background: #8b4413;
+            color: #fff;
+            border-color: #8b4413;
+        }
+
+        .suggested-questions {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            padding: 0 24px 12px;
+            overflow-x: auto;
+            align-items: center;
+        }
+
+        .suggested-questions::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .suggested-questions-label {
+            font-size: 12px;
+            color: #b8a890;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .suggested-question {
+            padding: 5px 12px;
+            background: #fff;
+            border: 1px solid #e8e0d5;
+            border-radius: 14px;
+            font-size: 12px;
+            color: #8b7355;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .suggested-question:hover {
+            background: #8b4413;
+            color: #fff;
+            border-color: #8b4413;
+        }
+
+        /* 聊天区域 - 核心区域，自动填充剩余空间 */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 32px;
+            background: #faf8f5;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #d8cdb8;
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 14px 20px;
+            border-radius: 18px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-size: 15px;
+        }
+
+        .message.user .message-content {
+            background: #8b4413;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 10px rgba(139, 68, 19, 0.15);
+        }
+
+        .message.assistant .message-content {
+            background: #fff;
+            color: #5a4a3a;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 10px rgba(139, 68, 19, 0.06);
+            border: 1px solid #e8e0d5;
+        }
+
+        /* 底部输入区域 */
+        .input-area {
+            padding: 16px 32px 20px;
+            background: #fffef9;
+            border-top: 1px solid #e8e0d5;
+            flex-shrink: 0;
+        }
+
+        .current-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: linear-gradient(135deg, #f8f4ed 0%, #fff 100%);
+            border: 1px solid #d8cdb8;
+            border-radius: 16px;
+            font-size: 12px;
+            color: #8b4413;
+            margin-bottom: 12px;
+        }
+
+        .current-category-icon {
+            width: 16px;
+            height: 16px;
+            background: #8b4413;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 20px;
+            border: 1px solid #d8cdb8;
+            border-radius: 24px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #faf8f5;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            border-color: #8b4413;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(139, 68, 19, 0.08);
+        }
+
+        input[type="text"]::placeholder {
+            color: #b8a890;
+        }
+
+        button.send-btn {
+            padding: 14px 32px;
+            background: #8b4413;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(139, 68, 19, 0.2);
+            font-family: inherit;
+        }
+
+        button.send-btn:hover {
+            background: #a0522d;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 16px rgba(139, 68, 19, 0.25);
+        }
+
+        button.send-btn:active {
+            transform: translateY(0);
+        }
+
+        button.send-btn:disabled {
+            background: #c8b8a8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .typing {
+            display: flex;
+            gap: 6px;
+            padding: 14px 20px;
+            background: #fff;
+            border-radius: 18px;
+            border: 1px solid #e8e0d5;
+            box-shadow: 0 2px 10px rgba(139, 68, 19, 0.06);
+            max-width: 70px;
+        }
+
+        .typing span {
+            width: 8px;
+            height: 8px;
+            background: #8b4413;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .typing span:nth-child(1) { animation-delay: -0.32s; }
+        .typing span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 引导提示 */
+        .guide-hint {
+            text-align: center;
+            padding: 20px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #fff 0%, #faf8f5 100%);
+            border: 1px dashed #d8cdb8;
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease 0.3s backwards;
+        }
+
+        .hint-text {
+            font-size: 14px;
+            color: #8b4413;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .hint-sub {
+            font-size: 12px;
+            color: #b8a890;
+            margin: 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 8px;
+            color: #b8a890;
+            font-size: 11px;
+            background: #fffef9;
+            letter-spacing: 1px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .container {
+                max-width: 100%;
+            }
+
+            .header {
+                padding: 16px 20px;
+                gap: 12px;
+            }
+
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .header-text {
+                font-size: 22px;
+                letter-spacing: 3px;
+            }
+
+            .main-category {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .sub-categories {
+                padding: 10px 16px 6px;
+                gap: 8px;
+            }
+
+            .sub-category {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+
+            .suggested-questions {
+                padding: 0 16px 10px;
+                gap: 6px;
+            }
+
+            .suggested-question {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+
+            .chat-container {
+                padding: 16px 20px;
+            }
+
+            .message-content {
+                max-width: 85%;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            .input-area {
+                padding: 12px 16px 16px;
+            }
+
+            .current-category {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            input[type="text"] {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+
+            button.send-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <!-- 顶部标题栏 -->
         <div class="header">
-            <div class="logo">
-                <img src="logo.jpg" alt="一弭logo">
-            </div>
+            <img src="logo.jpg" alt="一弭" class="logo" />
             <span class="header-text">人生智慧 · 一弭化解</span>
-            <button class="header-btn" id="historyBtn">历史</button>
         </div>
 
-        <!-- 分类区域 -->
-        <div class="categories-section">
-            <div class="main-categories" id="mainCategories"></div>
+        <!-- 一级分类 -->
+        <div class="main-categories" id="mainCategories">
+            <button class="main-category active" data-category="workplace">职场事业</button>
+            <button class="main-category" data-category="social">人际交往</button>
+            <button class="main-category" data-category="love">情感婚恋</button>
+            <button class="main-category" data-category="family">家庭关系</button>
+            <button class="main-category" data-category="life">人生规划</button>
+            <button class="main-category" data-category="mental">心理调适</button>
+            <button class="main-category" data-category="growth">自我提升</button>
+        </div>
+
+        <!-- 二级分类 + 推荐问题 -->
+        <div class="category-section">
             <div class="sub-categories" id="subCategories"></div>
             <div class="suggested-questions" id="suggestedQuestions"></div>
         </div>
@@ -42,19 +510,22 @@
         <!-- 聊天区域 -->
         <div class="chat-container" id="chatContainer">
             <div class="message assistant">
-                <div class="message-content">你好，我是一弭。选择一个分类，说说你的困惑。</div>
+                <div class="message-content">你好，我是一弭。🌿 在这里，你可以自由倾诉，我会用中西融合的智慧，陪你一起化解困惑。</div>
+            </div>
+            <div class="guide-hint">
+                <p class="hint-text">💡 点击下方推荐问题，快速开始对话</p>
+                <p class="hint-sub">或者直接在输入框中告诉我你的困扰</p>
             </div>
         </div>
 
-        <!-- 输入区域 -->
+        <!-- 底部输入区域 -->
         <div class="input-area">
             <div class="current-category" id="currentCategory">
                 <span class="current-category-icon">✓</span>
-                <span id="categoryText">选择分类</span>
+                <span id="categoryText">职场事业 · 职场人际关系</span>
             </div>
             <div class="input-group">
-                <input type="text" id="userInput" placeholder="说说你的困惑..." />
-                <button class="voice-btn" id="voiceBtn">🎤</button>
+                <input type="text" id="userInput" placeholder="点击上方问题，或在这里输入你的困惑..." />
                 <button class="send-btn" id="sendBtn">发送</button>
             </div>
         </div>
@@ -62,10 +533,219 @@
         <div class="footer">onestand.cn · 一弭</div>
     </div>
 
-    <!-- Toast提示 -->
-    <div class="toast" id="toast"></div>
+    <script>
+        // 分类配置
+        const CATEGORIES = {
+            workplace: {
+                name: '职场事业',
+                subs: [
+                    { id: 'workplace-conflict', name: '职场人际关系', questions: ['同事总是针对我怎么办？', '领导不信任我如何破局？', '如何拒绝同事的无理要求？'] },
+                    { id: 'career-plan', name: '职业发展规划', questions: ['感觉工作没前途怎么办？', '30岁了还没方向怎么破？', '如何判断该不该跳槽？'] },
+                    { id: 'work-pressure', name: '工作压力应对', questions: ['工作压力大想辞职怎么办？', '如何应对职场内卷？', '加班太多身体吃不消怎么办？'] },
+                    { id: 'job-hop', name: '跳槽转型决策', questions: ['现在跳槽时机对吗？', '转行要做什么准备？', '裸辞风险大吗？'] },
+                    { id: 'startup', name: '创业管理难题', questions: ['创业失败了怎么面对？', '合伙人有矛盾怎么办？', '资金链紧张如何应对？'] },
+                    { id: 'promotion', name: '职场晋升策略', questions: ['如何争取升职加薪？', '业绩好却不被提拔怎么办？', '如何让领导看到我的价值？'] }
+                ]
+            },
+            social: {
+                name: '人际交往',
+                subs: [
+                    { id: 'social-anxiety', name: '社交恐惧克服', questions: ['害怕社交场合怎么办？', '不知道聊什么很尴尬怎么办？', '如何克服当众讲话恐惧？'] },
+                    { id: 'friendship', name: '朋友相处之道', questions: ['朋友借钱不还怎么办？', '好朋友渐行渐远怎么挽回？', '如何处理朋友的背叛？'] },
+                    { id: 'business-social', name: '商务社交技巧', questions: ['如何快速建立人脉？', '商务饭局如何应对？', '怎么说话才能让人记住？'] },
+                    { id: 'opposite-sex', name: '异性交往困扰', questions: ['不知道怎么和异性聊天怎么办？', '总是被发好人卡怎么办？', '异性朋友边界感怎么把握？'] },
+                    { id: 'stranger', name: '陌生人沟通', questions: ['如何破冰和陌生人聊天？', '怎样快速建立信任？', '怎么让人愿意帮我？'] },
+                    { id: 'conflict', name: '冲突化解之道', questions: ['和人发生冲突怎么办？', '如何化解长期矛盾？', '对方不沟通怎么破？'] }
+                ]
+            },
+            love: {
+                name: '情感婚恋',
+                subs: [
+                    { id: 'dating', name: '恋爱相处技巧', questions: ['恋爱中总是患得患失怎么办？', '对方不够关心我怎么办？', '如何经营异地恋？'] },
+                    { id: 'breakup', name: '分手情感修复', questions: ['分手后走不出来怎么办？', '被分手如何挽回自尊？', '如何判断该不该复合？'] },
+                    { id: 'marriage', name: '婚姻经营之道', questions: ['婚姻变得平淡怎么办？', '夫妻沟通总是吵架怎么办？', '如何保持婚姻中的新鲜感？'] },
+                    { id: 'cheating', name: '出轨背叛处理', questions: ['发现对方出轨怎么办？', '被背叛后还能信任吗？', '该不该原谅出轨的人？'] },
+                    { id: 'single', name: '单身脱单困扰', questions: ['一直单身是什么原因？', '相亲总是失败怎么办？', '如何扩大交友圈？'] },
+                    { id: 'ex', name: '前任情感纠葛', questions: ['前任一直联系我怎么办？', '前任有了新欢如何放下？', '该不该和前任做朋友？'] }
+                ]
+            },
+            family: {
+                name: '家庭关系',
+                subs: [
+                    { id: 'mother-in-law', name: '婆媳矛盾化解', questions: ['婆婆总是干涉我们怎么办？', '婆媳关系不好怎么调解？', '老公不理解我的委屈怎么办？'] },
+                    { id: 'parenting', name: '亲子教育问题', questions: ['孩子不听话怎么办？', '孩子成绩差怎么引导？', '如何与青春期孩子沟通？'] },
+                    { id: 'parents', name: '父母相处之道', questions: ['父母不理解我怎么办？', '父母总是唠叨怎么应对？', '如何尽孝又不委屈自己？'] },
+                    { id: 'sibling', name: '兄弟姐妹关系', questions: ['兄弟姐妹间有矛盾怎么办？', '遗产分配不公平如何处理？', '兄弟姐妹借钱不还怎么办？'] },
+                    { id: 'in-laws', name: '姻亲关系处理', questions: ['岳父母对我有意见怎么办？', '亲戚总是借钱怎么拒绝？', '过年走亲戚压力大怎么办？'] },
+                    { id: 'elderly', name: '养老照顾难题', questions: ['父母老了怎么安排养老？', '照顾老人压力大怎么办？', '兄弟姐妹不愿分担养老怎么办？'] }
+                ]
+            },
+            life: {
+                name: '人生规划',
+                subs: [
+                    { id: 'direction', name: '人生方向迷茫', questions: ['不知道人生该往哪走？', '感觉浑浑噩噩怎么办？', '如何找到人生目标？'] },
+                    { id: 'choice', name: '选择困难决策', questions: ['总是做不了决定怎么办？', '如何做出不后悔的选择？', '两个选择都很纠结怎么破？'] },
+                    { id: 'meaning', name: '人生意义探寻', questions: ['人生的意义是什么？', '感觉活着没意思怎么办？', '如何活出自己想要的样子？'] },
+                    { id: 'goal', name: '目标设定执行', questions: ['定了目标总是坚持不了怎么办？', '如何制定可行的目标？', '目标太多无从下手怎么办？'] },
+                    { id: 'balance', name: '工作生活平衡', questions: ['工作生活如何平衡？', '总是没时间陪伴家人怎么办？', '如何在工作之余发展兴趣？'] },
+                    { id: 'midlife', name: '中年危机应对', questions: ['中年危机来了怎么办？', '上有老下有小压力大怎么破？', '中年转行还来得及吗？'] }
+                ]
+            },
+            mental: {
+                name: '心理调适',
+                subs: [
+                    { id: 'anxiety', name: '焦虑情绪调节', questions: ['总是很焦虑怎么办？', '一到考试就焦虑怎么缓解？', '焦虑影响睡眠怎么办？'] },
+                    { id: 'depression', name: '抑郁情绪应对', questions: ['感觉抑郁怎么办？', '对什么都提不起兴趣怎么办？', '如何走出情绪低谷？'] },
+                    { id: 'stress', name: '压力释放技巧', questions: ['压力大怎么释放？', '如何缓解精神紧张？', '压力大到崩溃怎么办？'] },
+                    { id: 'insomnia', name: '失眠困扰解决', questions: ['总是失眠怎么办？', '入睡困难如何改善？', '睡眠质量差怎么调理？'] },
+                    { id: 'self-doubt', name: '自我怀疑克服', questions: ['总是自我怀疑怎么办？', '觉得自己很失败怎么办？', '如何建立稳定的自我认知？'] },
+                    { id: 'trauma', name: '心理创伤修复', questions: ['如何走出心理创伤？', '童年阴影如何疗愈？', '遭遇重大打击如何恢复？'] }
+                ]
+            },
+            growth: {
+                name: '自我提升',
+                subs: [
+                    { id: 'confidence', name: '自信心建立', questions: ['如何提升自信心？', '总是不自信怎么办？', '如何克服自卑心理？'] },
+                    { id: 'habits', name: '好习惯养成', questions: ['如何养成好习惯？', '总是三分钟热度怎么办？', '如何戒掉坏习惯？'] },
+                    { id: 'learning', name: '学习方法优化', questions: ['如何提高学习效率？', '学了就忘怎么办？', '如何保持持续学习？'] },
+                    { id: 'time-manage', name: '时间管理技巧', questions: ['如何高效管理时间？', '总是拖延怎么办？', '如何做好时间规划？'] },
+                    { id: 'emotion-control', name: '情绪管理能力', questions: ['如何控制情绪？', '容易冲动怎么办？', '如何管理负面情绪？'] },
+                    { id: 'charisma', name: '个人魅力提升', questions: ['如何提升个人魅力？', '如何提升说话水平？', '如何让人印象深刻？'] }
+                ]
+            }
+        };
 
-    <!-- 脚本 -->
-    <script type="module" src="app.js"></script>
+        let currentMainCategory = 'workplace';
+        let currentSubCategory = 'workplace-conflict';
+        let history = [];
+
+        function init() {
+            renderSubCategories('workplace');
+            updateCategoryDisplay();
+
+            document.querySelectorAll('.main-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.main-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMainCategory = this.dataset.category;
+                    renderSubCategories(currentMainCategory);
+                    updateCategoryDisplay();
+                });
+            });
+        }
+
+        function updateCategoryDisplay() {
+            const main = CATEGORIES[currentMainCategory];
+            const sub = main.subs.find(s => s.id === currentSubCategory);
+            document.getElementById('categoryText').textContent = `${main.name} · ${sub ? sub.name : ''}`;
+        }
+
+        function renderSubCategories(mainCategory) {
+            const container = document.getElementById('subCategories');
+            const category = CATEGORIES[mainCategory];
+
+            container.innerHTML = category.subs.map((sub, i) => 
+                `<button class="sub-category ${i === 0 ? 'active' : ''}" data-id="${sub.id}">${sub.name}</button>`
+            ).join('');
+
+            currentSubCategory = category.subs[0].id;
+            renderQuestions(category.subs[0]);
+            updateCategoryDisplay();
+
+            container.querySelectorAll('.sub-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    container.querySelectorAll('.sub-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSubCategory = this.dataset.id;
+                    const sub = category.subs.find(s => s.id === currentSubCategory);
+                    renderQuestions(sub);
+                    updateCategoryDisplay();
+                });
+            });
+        }
+
+        function renderQuestions(sub) {
+            const container = document.getElementById('suggestedQuestions');
+            if (!sub || !sub.questions) { container.innerHTML = ''; return; }
+            container.innerHTML = `<span class="suggested-questions-label">试试：</span>` + 
+                sub.questions.map(q => `<button class="suggested-question">${q}</button>`).join('');
+            container.querySelectorAll('.suggested-question').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('userInput').value = this.textContent;
+                    document.getElementById('userInput').focus();
+                    // 自动发送消息
+                    setTimeout(() => sendMessage(), 300);
+                });
+            });
+        }
+
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatContainer = document.getElementById('chatContainer');
+
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.innerHTML = `<div class="message-content">${content}</div>`;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'message assistant';
+            div.id = 'typing';
+            div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeTyping() {
+            const t = document.getElementById('typing');
+            if (t) t.remove();
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // 隐藏引导提示
+            const guideHint = document.querySelector('.guide-hint');
+            if (guideHint) {
+                guideHint.style.opacity = '0';
+                setTimeout(() => guideHint.remove(), 300);
+            }
+
+            addMessage('user', message);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            showTyping();
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, category: currentSubCategory, history: history.slice(-4) })
+                });
+                const data = await res.json();
+                removeTyping();
+                if (data.success) {
+                    addMessage('assistant', data.reply);
+                    history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
+                } else {
+                    addMessage('assistant', `抱歉：${data.error}`);
+                }
+            } catch (e) {
+                removeTyping();
+                addMessage('assistant', '网络异常，请稍后再试。');
+            }
+            sendBtn.disabled = false;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+        init();
+    </script>
 </body>
 </html>
