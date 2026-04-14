@@ -111,8 +111,8 @@ var _hmt = _hmt || [];
             background: #fffef9;
             border-bottom: 1px solid #e8e0d5;
             flex-shrink: 0;
-            max-height: 150px;
-            overflow: hidden;
+            max-height: 160px;
+            overflow: visible;
         }
 
         .sub-categories {
@@ -157,7 +157,7 @@ var _hmt = _hmt || [];
             display: flex;
             flex-wrap: nowrap;
             gap: 8px;
-            padding: 0 24px 12px;
+            padding: 8px 24px 12px;
             overflow-x: auto;
             overflow-y: visible;
             align-items: center;
@@ -169,9 +169,14 @@ var _hmt = _hmt || [];
 
         .suggested-questions-label {
             font-size: 12px;
-            color: #b8a890;
+            color: #8b4413;
             white-space: nowrap;
             flex-shrink: 0;
+            font-weight: 500;
+            background: linear-gradient(135deg, #f8f4ed 0%, #fff 100%);
+            padding: 5px 10px;
+            border-radius: 12px;
+            border: 1px solid #d8cdb8;
         }
 
         .suggested-question {
@@ -191,6 +196,18 @@ var _hmt = _hmt || [];
             background: #8b4413;
             color: #fff;
             border-color: #8b4413;
+            transform: translateY(-2px);
+        }
+
+        /* 热点话题标签 */
+        .hot-topic {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+            border-color: #e74c3c;
+        }
+
+        .hot-topic:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
         }
 
         /* 聊天区域 - 核心区域，自动填充剩余空间 */
@@ -302,9 +319,9 @@ var _hmt = _hmt || [];
 
         input[type="text"] {
             flex: 1;
-            padding: 14px 50px 14px 20px;
+            padding: 16px 60px 16px 20px;
             border: 1px solid #d8cdb8;
-            border-radius: 24px;
+            border-radius: 28px;
             font-size: 15px;
             outline: none;
             transition: all 0.2s ease;
@@ -322,37 +339,61 @@ var _hmt = _hmt || [];
             color: #b8a890;
         }
 
-        /* 语音按钮 */
+        /* 语音按钮 - 更大更明显 */
         .voice-btn {
             position: absolute;
             right: 8px;
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent;
+            width: 44px;
+            height: 44px;
+            border: 2px solid #d8cdb8;
+            background: linear-gradient(135deg, #fff 0%, #faf8f5 100%);
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            font-size: 18px;
-            color: #8b7355;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            color: #8b4413;
+            box-shadow: 0 2px 8px rgba(139, 68, 19, 0.1);
+            z-index: 10;
         }
 
         .voice-btn:hover {
-            background: rgba(139, 68, 19, 0.1);
-            color: #8b4413;
+            background: linear-gradient(135deg, #8b4413 0%, #a0522d 100%);
+            color: #fff;
+            border-color: #8b4413;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(139, 68, 19, 0.3);
         }
 
         .voice-btn.recording {
-            color: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+            border-color: #e74c3c;
             animation: voicePulse 1s ease-in-out infinite;
         }
 
+        .voice-btn::after {
+            content: '语音';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #8b7355;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .voice-btn:hover::after {
+            opacity: 1;
+        }
+
         @keyframes voicePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
         }
 
         /* 语音指示器 */
@@ -364,11 +405,12 @@ var _hmt = _hmt || [];
             transform: translate(-50%, -50%);
             background: rgba(139, 68, 19, 0.95);
             color: #fff;
-            padding: 30px 50px;
+            padding: 40px 60px;
             border-radius: 20px;
             text-align: center;
             z-index: 1000;
             animation: fadeIn 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .voice-indicator.active {
@@ -376,8 +418,8 @@ var _hmt = _hmt || [];
         }
 
         .voice-indicator .icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 64px;
+            margin-bottom: 15px;
             animation: voiceWave 1.5s ease-in-out infinite;
         }
 
@@ -387,21 +429,22 @@ var _hmt = _hmt || [];
         }
 
         .voice-indicator .text {
-            font-size: 16px;
-            margin-bottom: 5px;
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
 
         .voice-indicator .hint {
-            font-size: 12px;
+            font-size: 14px;
             opacity: 0.8;
         }
 
         button.send-btn {
-            padding: 14px 32px;
-            background: #8b4413;
+            padding: 16px 36px;
+            background: linear-gradient(135deg, #8b4413 0%, #a0522d 100%);
             color: #fff;
             border: none;
-            border-radius: 24px;
+            border-radius: 28px;
             font-size: 15px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -411,7 +454,7 @@ var _hmt = _hmt || [];
         }
 
         button.send-btn:hover {
-            background: #a0522d;
+            background: linear-gradient(135deg, #a0522d 0%, #8b4413 100%);
             transform: translateY(-1px);
             box-shadow: 0 5px 16px rgba(139, 68, 19, 0.25);
         }
@@ -617,7 +660,7 @@ var _hmt = _hmt || [];
             }
 
             .suggested-questions {
-                padding: 0 16px 10px;
+                padding: 8px 16px 10px;
                 gap: 6px;
             }
 
@@ -646,19 +689,19 @@ var _hmt = _hmt || [];
             }
 
             input[type="text"] {
-                padding: 14px 50px 14px 18px;
+                padding: 16px 60px 16px 18px;
                 font-size: 15px;
             }
 
             .voice-btn {
-                width: 40px;
-                height: 40px;
+                width: 48px;
+                height: 48px;
                 right: 6px;
-                font-size: 20px;
+                font-size: 22px;
             }
 
             button.send-btn {
-                padding: 14px 28px;
+                padding: 16px 32px;
                 font-size: 15px;
             }
 
@@ -730,7 +773,7 @@ var _hmt = _hmt || [];
             </div>
             <div class="guide-hint">
                 <p class="hint-text">💡 点击下方推荐问题，快速开始对话</p>
-                <p class="hint-sub">或者直接在输入框中告诉我你的困扰</p>
+                <p class="hint-sub">或者点击右侧🎤按钮，用语音告诉我你的困扰</p>
             </div>
         </div>
 
@@ -749,7 +792,7 @@ var _hmt = _hmt || [];
             </div>
             <div class="input-group">
                 <div class="input-wrapper">
-                    <input type="text" id="userInput" placeholder="点击上方问题，或在这里输入你的困惑..." />
+                    <input type="text" id="userInput" placeholder="点击推荐问题，或点击🎤语音输入..." />
                     <button class="voice-btn" id="voiceBtn" title="语音输入">🎤</button>
                 </div>
                 <button class="send-btn" id="sendBtn">发送</button>
@@ -841,6 +884,32 @@ var _hmt = _hmt || [];
             }
         };
 
+        // 每日热点（根据日期动态生成）
+        function getDailyHotTopics() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0-6, 0 is Sunday
+            
+            // 根据星期几生成不同的热点话题
+            const hotTopics = [
+                // 周一 - 职场主题
+                ['周一综合症怎么办？', '如何快速进入工作状态？', '周一开会太多怎么应对？'],
+                // 周二 - 人际主题
+                ['如何和难相处的同事相处？', '怎么拒绝不想去的饭局？', '职场中如何建立好人缘？'],
+                // 周三 - 情感主题
+                ['周三情绪低落怎么办？', '如何保持恋爱新鲜感？', '感觉孤独了怎么缓解？'],
+                // 周四 - 家庭主题
+                ['婆媳矛盾怎么化解？', '孩子不听话怎么办？', '如何平衡工作和家庭？'],
+                // 周五 - 人生主题
+                ['周末如何安排才不虚度？', '35岁焦虑怎么办？', '如何找到人生意义？'],
+                // 周六 - 心理主题
+                ['周末失眠怎么办？', '如何缓解焦虑情绪？', '总觉得不自信怎么破？'],
+                // 周日 - 自我提升
+                ['如何制定下周计划？', '怎么培养阅读习惯？', '如何提升个人魅力？']
+            ];
+            
+            return hotTopics[dayOfWeek] || hotTopics[0];
+        }
+
         let currentMainCategory = 'workplace';
         let currentSubCategory = 'workplace-conflict';
         let history = [];
@@ -917,17 +986,29 @@ var _hmt = _hmt || [];
                 return; 
             }
             
-            const questionsHTML = sub.questions.map(q => 
-                `<button class="suggested-question">${q}</button>`
+            // 获取每日热点
+            const hotTopics = getDailyHotTopics();
+            
+            // 合并推荐问题和热点话题
+            const allQuestions = [
+                ...hotTopics.map(q => ({ text: q, isHot: true })),
+                ...sub.questions.map(q => ({ text: q, isHot: false }))
+            ];
+            
+            const questionsHTML = allQuestions.map(q => 
+                `<button class="suggested-question ${q.isHot ? 'hot-topic' : ''}" title="${q.isHot ? '🔥 今日热点' : ''}">
+                    ${q.isHot ? '🔥 ' : ''}${q.text}
+                </button>`
             ).join('');
             
-            container.innerHTML = `<span class="suggested-questions-label">试试：</span>` + questionsHTML;
+            container.innerHTML = `<span class="suggested-questions-label">推荐：</span>` + questionsHTML;
             
-            console.log('Questions rendered:', questionsHTML);
+            console.log('Questions rendered with hot topics:', allQuestions);
             
             container.querySelectorAll('.suggested-question').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    document.getElementById('userInput').value = this.textContent;
+                    const questionText = this.textContent.replace('🔥 ', '');
+                    document.getElementById('userInput').value = questionText;
                     document.getElementById('userInput').focus();
                     // 自动发送消息
                     setTimeout(() => sendMessage(), 300);
@@ -935,64 +1016,93 @@ var _hmt = _hmt || [];
             });
         }
 
-        // 语音识别功能
+        // 语音识别功能 - 增强版
         function initVoiceRecognition() {
-            // 检查浏览器是否支持语音识别
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            console.log('初始化语音识别...');
+            
+            // 检测浏览器支持的语音识别API
+            const SpeechRecognition = window.SpeechRecognition || 
+                                      window.webkitSpeechRecognition || 
+                                      window.mozSpeechRecognition || 
+                                      window.msSpeechRecognition;
             
             if (!SpeechRecognition) {
-                console.log('浏览器不支持语音识别');
-                document.getElementById('voiceBtn').style.display = 'none';
+                console.log('浏览器不支持语音识别，将尝试备用方案');
+                alert('您的浏览器可能不支持语音识别功能。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                document.getElementById('voiceBtn').style.opacity = '0.5';
+                document.getElementById('voiceBtn').style.cursor = 'not-allowed';
                 return;
             }
 
-            recognition = new SpeechRecognition();
-            recognition.lang = 'zh-CN';
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            try {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'zh-CN';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
 
-            recognition.onstart = function() {
-                isRecording = true;
-                document.getElementById('voiceBtn').classList.add('recording');
-                document.getElementById('voiceIndicator').classList.add('active');
-                console.log('语音识别已启动');
-            };
+                recognition.onstart = function() {
+                    isRecording = true;
+                    document.getElementById('voiceBtn').classList.add('recording');
+                    document.getElementById('voiceIndicator').classList.add('active');
+                    console.log('语音识别已启动');
+                };
 
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                console.log('识别结果:', transcript);
-                document.getElementById('userInput').value = transcript;
-            };
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const confidence = event.results[0][0].confidence;
+                    console.log('识别结果:', transcript, '置信度:', confidence);
+                    
+                    // 如果置信度太低，提示用户重试
+                    if (confidence < 0.5) {
+                        console.log('识别置信度较低:', confidence);
+                    }
+                    
+                    document.getElementById('userInput').value = transcript;
+                };
 
-            recognition.onerror = function(event) {
-                console.error('语音识别错误:', event.error);
-                let errorMessage = '语音识别失败';
+                recognition.onerror = function(event) {
+                    console.error('语音识别错误:', event.error);
+                    let errorMessage = '语音识别失败';
+                    
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMessage = '未检测到语音，请重试';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = '无法访问麦克风，请检查设备设置';
+                            break;
+                        case 'not-allowed':
+                            errorMessage = '麦克风权限被拒绝，请在浏览器设置中允许';
+                            break;
+                        case 'network':
+                            errorMessage = '网络连接失败，请检查网络';
+                            break;
+                        case 'aborted':
+                            errorMessage = '语音识别被中断';
+                            break;
+                        default:
+                            errorMessage = '语音识别失败: ' + event.error;
+                    }
+                    
+                    alert(errorMessage);
+                    stopRecording();
+                };
+
+                recognition.onend = function() {
+                    console.log('语音识别结束');
+                    stopRecording();
+                };
+
+                // 绑定语音按钮事件
+                document.getElementById('voiceBtn').addEventListener('click', toggleRecording);
+                document.getElementById('voiceIndicator').addEventListener('click', toggleRecording);
                 
-                switch(event.error) {
-                    case 'no-speech':
-                        errorMessage = '未检测到语音，请重试';
-                        break;
-                    case 'audio-capture':
-                        errorMessage = '无法访问麦克风';
-                        break;
-                    case 'not-allowed':
-                        errorMessage = '麦克风权限被拒绝';
-                        break;
-                    case 'network':
-                        errorMessage = '网络连接失败';
-                        break;
-                }
-                
-                alert(errorMessage);
-                stopRecording();
-            };
-
-            recognition.onend = function() {
-                stopRecording();
-            };
-
-            // 绑定语音按钮事件
-            document.getElementById('voiceBtn').addEventListener('click', toggleRecording);
+                console.log('语音识别初始化成功');
+            } catch (e) {
+                console.error('语音识别初始化失败:', e);
+                alert('语音识别初始化失败，请刷新页面重试');
+            }
         }
 
         function toggleRecording() {
@@ -1005,14 +1115,21 @@ var _hmt = _hmt || [];
 
         function startRecording() {
             if (!recognition) {
-                alert('您的浏览器不支持语音识别功能');
+                alert('您的浏览器不支持语音识别功能。建议使用 Chrome、Edge 或 Safari 浏览器。');
                 return;
             }
 
             try {
                 recognition.start();
+                console.log('开始录音...');
             } catch (e) {
                 console.error('启动语音识别失败:', e);
+                if (e.message.includes('already started')) {
+                    stopRecording();
+                    setTimeout(() => startRecording(), 100);
+                } else {
+                    alert('启动语音识别失败: ' + e.message);
+                }
             }
         }
 
@@ -1020,6 +1137,7 @@ var _hmt = _hmt || [];
             if (recognition && isRecording) {
                 try {
                     recognition.stop();
+                    console.log('停止录音...');
                 } catch (e) {
                     console.error('停止语音识别失败:', e);
                 }
@@ -1101,9 +1219,6 @@ var _hmt = _hmt || [];
                 if (data.success) {
                     addMessage('assistant', data.reply);
                     history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
-                    
-                    // 可选：播放语音回复（需要浏览器支持）
-                    // playVoiceResponse(data.reply);
                 } else {
                     addMessage('assistant', `抱歉：${data.error}`);
                 }
