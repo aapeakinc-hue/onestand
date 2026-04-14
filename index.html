@@ -379,7 +379,7 @@ var _hmt = _hmt || [];
             background: linear-gradient(135deg, #fff 0%, #faf8f5 100%);
             border: 1px dashed #d8cdb8;
             border-radius: 12px;
-            animation: fadeIn 0.5s ease 0.3s backwards;
+            animation: fadeIn 0.5s ease 0.3s backwards, pulse 2s ease-in-out infinite 1s;
         }
 
         .hint-text {
@@ -393,6 +393,99 @@ var _hmt = _hmt || [];
             font-size: 12px;
             color: #b8a890;
             margin: 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(139, 68, 19, 0.4); 
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 0 10px rgba(139, 68, 19, 0); 
+                transform: scale(1.02);
+            }
+        }
+
+        /* 开始对话按钮 */
+        .start-chat-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #8b4413 0%, #a0522d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 68, 19, 0.3);
+            font-family: inherit;
+            animation: fadeIn 0.6s ease 0.8s backwards, buttonPulse 2s ease-in-out infinite 2s;
+        }
+
+        .start-chat-btn:hover {
+            background: linear-gradient(135deg, #a0522d 0%, #8b4413 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 68, 19, 0.4);
+        }
+
+        .start-chat-btn:active {
+            transform: translateY(0);
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { 
+                box-shadow: 0 4px 15px rgba(139, 68, 19, 0.3);
+            }
+            50% { 
+                box-shadow: 0 4px 25px rgba(139, 68, 19, 0.5);
+            }
+        }
+
+        /* 示例对话 */
+        .demo-conversation {
+            margin: 15px 0;
+            padding: 15px 20px;
+            background: rgba(139, 68, 19, 0.05);
+            border-radius: 12px;
+            animation: slideIn 0.8s ease 1.2s backwards;
+        }
+
+        .demo-message {
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .demo-message.user {
+            background: #8b4413;
+            color: #fff;
+            margin-left: 20%;
+            text-align: right;
+        }
+
+        .demo-message.assistant {
+            background: #fff;
+            color: #5a4a3a;
+            margin-right: 20%;
+            border: 1px solid #e8e0d5;
+        }
+
+        .demo-label {
+            font-size: 11px;
+            color: #b8a890;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .footer {
@@ -470,13 +563,40 @@ var _hmt = _hmt || [];
             }
 
             input[type="text"] {
-                padding: 12px 16px;
-                font-size: 14px;
+                padding: 14px 18px;
+                font-size: 15px;
             }
 
             button.send-btn {
-                padding: 12px 24px;
-                font-size: 14px;
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+
+            .start-chat-btn {
+                padding: 16px 24px;
+                font-size: 15px;
+                margin: 15px auto;
+            }
+
+            .guide-hint {
+                padding: 15px;
+            }
+
+            .hint-text {
+                font-size: 13px;
+            }
+
+            .hint-sub {
+                font-size: 11px;
+            }
+
+            .demo-conversation {
+                padding: 12px 16px;
+            }
+
+            .demo-message {
+                font-size: 12px;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -512,8 +632,14 @@ var _hmt = _hmt || [];
             <div class="message assistant">
                 <div class="message-content">你好，我是一弭。🌿 在这里，你可以自由倾诉，我会用中西融合的智慧，陪你一起化解困惑。</div>
             </div>
+            <button class="start-chat-btn" id="startChatBtn">🌿 点击开始对话</button>
+            <div class="demo-conversation" id="demoConversation">
+                <p class="demo-label">💬 对话示例</p>
+                <div class="demo-message user">同事总是针对我怎么办？</div>
+                <div class="demo-message assistant">我能理解你的委屈。在职场中，这种情况往往不是你的错...</div>
+            </div>
             <div class="guide-hint">
-                <p class="hint-text">💡 点击上方推荐问题，快速开始对话</p>
+                <p class="hint-text">💡 点击下方推荐问题，快速开始对话</p>
                 <p class="hint-sub">或者直接在输入框中告诉我你的困扰</p>
             </div>
         </div>
@@ -618,134 +744,4 @@ var _hmt = _hmt || [];
         let currentMainCategory = 'workplace';
         let currentSubCategory = 'workplace-conflict';
         let history = [];
-
-        function init() {
-            renderSubCategories('workplace');
-            updateCategoryDisplay();
-
-            document.querySelectorAll('.main-category').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.main-category').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentMainCategory = this.dataset.category;
-                    renderSubCategories(currentMainCategory);
-                    updateCategoryDisplay();
-                });
-            });
-        }
-
-        function updateCategoryDisplay() {
-            const main = CATEGORIES[currentMainCategory];
-            const sub = main.subs.find(s => s.id === currentSubCategory);
-            document.getElementById('categoryText').textContent = `${main.name} · ${sub ? sub.name : ''}`;
-        }
-
-        function renderSubCategories(mainCategory) {
-            const container = document.getElementById('subCategories');
-            const category = CATEGORIES[mainCategory];
-
-            container.innerHTML = category.subs.map((sub, i) => 
-                `<button class="sub-category ${i === 0 ? 'active' : ''}" data-id="${sub.id}">${sub.name}</button>`
-            ).join('');
-
-            currentSubCategory = category.subs[0].id;
-            renderQuestions(category.subs[0]);
-            updateCategoryDisplay();
-
-            container.querySelectorAll('.sub-category').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    container.querySelectorAll('.sub-category').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentSubCategory = this.dataset.id;
-                    const sub = category.subs.find(s => s.id === currentSubCategory);
-                    renderQuestions(sub);
-                    updateCategoryDisplay();
-                });
-            });
-        }
-
-        function renderQuestions(sub) {
-            const container = document.getElementById('suggestedQuestions');
-            if (!sub || !sub.questions) { container.innerHTML = ''; return; }
-            container.innerHTML = `<span class="suggested-questions-label">试试：</span>` + 
-                sub.questions.map(q => `<button class="suggested-question">${q}</button>`).join('');
-            container.querySelectorAll('.suggested-question').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.getElementById('userInput').value = this.textContent;
-                    document.getElementById('userInput').focus();
-                    // 自动发送消息
-                    setTimeout(() => sendMessage(), 300);
-                });
-            });
-        }
-
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const chatContainer = document.getElementById('chatContainer');
-
-        function addMessage(role, content) {
-            const div = document.createElement('div');
-            div.className = `message ${role}`;
-            div.innerHTML = `<div class="message-content">${content}</div>`;
-            chatContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function showTyping() {
-            const div = document.createElement('div');
-            div.className = 'message assistant';
-            div.id = 'typing';
-            div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
-            chatContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function removeTyping() {
-            const t = document.getElementById('typing');
-            if (t) t.remove();
-        }
-
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
-
-            // 隐藏引导提示
-            const guideHint = document.querySelector('.guide-hint');
-            if (guideHint) {
-                guideHint.style.opacity = '0';
-                setTimeout(() => guideHint.remove(), 300);
-            }
-
-            addMessage('user', message);
-            userInput.value = '';
-            sendBtn.disabled = true;
-            showTyping();
-
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, category: currentSubCategory, history: history.slice(-4) })
-                });
-                const data = await res.json();
-                removeTyping();
-                if (data.success) {
-                    addMessage('assistant', data.reply);
-                    history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
-                } else {
-                    addMessage('assistant', `抱歉：${data.error}`);
-                }
-            } catch (e) {
-                removeTyping();
-                addMessage('assistant', '网络异常，请稍后再试。');
-            }
-            sendBtn.disabled = false;
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
-
-        init();
-    </script>
-</body>
-</html>
+        let
