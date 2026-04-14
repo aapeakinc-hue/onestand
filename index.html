@@ -111,7 +111,7 @@ var _hmt = _hmt || [];
             background: #fffef9;
             border-bottom: 1px solid #e8e0d5;
             flex-shrink: 0;
-            max-height: 120px;
+            max-height: 150px;
             overflow: hidden;
         }
 
@@ -138,6 +138,7 @@ var _hmt = _hmt || [];
             transition: all 0.2s ease;
             font-weight: 400;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .sub-category:hover {
@@ -158,6 +159,7 @@ var _hmt = _hmt || [];
             gap: 8px;
             padding: 0 24px 12px;
             overflow-x: auto;
+            overflow-y: visible;
             align-items: center;
         }
 
@@ -173,10 +175,10 @@ var _hmt = _hmt || [];
         }
 
         .suggested-question {
-            padding: 5px 12px;
+            padding: 6px 14px;
             background: #fff;
             border: 1px solid #e8e0d5;
-            border-radius: 14px;
+            border-radius: 16px;
             font-size: 12px;
             color: #8b7355;
             cursor: pointer;
@@ -539,7 +541,7 @@ var _hmt = _hmt || [];
             }
 
             .suggested-question {
-                padding: 4px 10px;
+                padding: 5px 12px;
                 font-size: 11px;
             }
 
@@ -645,7 +647,7 @@ var _hmt = _hmt || [];
         </div>
 
         <!-- 底部输入区域 -->
-        <div class="input-area">
+        <div class="input-area" id="inputArea">
             <div class="current-category" id="currentCategory">
                 <span class="current-category-icon">✓</span>
                 <span id="categoryText">职场事业 · 职场人际关系</span>
@@ -744,4 +746,179 @@ var _hmt = _hmt || [];
         let currentMainCategory = 'workplace';
         let currentSubCategory = 'workplace-conflict';
         let history = [];
-        let
+        let isFirstMessage = true;
+
+        function init() {
+            renderSubCategories('workplace');
+            updateCategoryDisplay();
+
+            document.querySelectorAll('.main-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.main-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMainCategory = this.dataset.category;
+                    renderSubCategories(currentMainCategory);
+                    updateCategoryDisplay();
+                });
+            });
+
+            // 开始对话按钮事件
+            document.getElementById('startChatBtn').addEventListener('click', function() {
+                const inputArea = document.getElementById('inputArea');
+                inputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    document.getElementById('userInput').focus();
+                }, 300);
+                
+                // 添加视觉反馈
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 100);
+            });
+        }
+
+        function updateCategoryDisplay() {
+            const main = CATEGORIES[currentMainCategory];
+            const sub = main.subs.find(s => s.id === currentSubCategory);
+            document.getElementById('categoryText').textContent = `${main.name} · ${sub ? sub.name : ''}`;
+        }
+
+        function renderSubCategories(mainCategory) {
+            const container = document.getElementById('subCategories');
+            const category = CATEGORIES[mainCategory];
+
+            container.innerHTML = category.subs.map((sub, i) => 
+                `<button class="sub-category ${i === 0 ? 'active' : ''}" data-id="${sub.id}">${sub.name}</button>`
+            ).join('');
+
+            currentSubCategory = category.subs[0].id;
+            renderQuestions(category.subs[0]);
+            updateCategoryDisplay();
+
+            container.querySelectorAll('.sub-category').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    container.querySelectorAll('.sub-category').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSubCategory = this.dataset.id;
+                    const sub = category.subs.find(s => s.id === currentSubCategory);
+                    renderQuestions(sub);
+                    updateCategoryDisplay();
+                });
+            });
+        }
+
+        function renderQuestions(sub) {
+            const container = document.getElementById('suggestedQuestions');
+            if (!sub || !sub.questions) { 
+                console.log('sub or sub.questions is undefined:', sub);
+                container.innerHTML = ''; 
+                return; 
+            }
+            
+            const questionsHTML = sub.questions.map(q => 
+                `<button class="suggested-question">${q}</button>`
+            ).join('');
+            
+            container.innerHTML = `<span class="suggested-questions-label">试试：</span>` + questionsHTML;
+            
+            console.log('Questions rendered:', questionsHTML);
+            
+            container.querySelectorAll('.suggested-question').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('userInput').value = this.textContent;
+                    document.getElementById('userInput').focus();
+                    // 自动发送消息
+                    setTimeout(() => sendMessage(), 300);
+                });
+            });
+        }
+
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatContainer = document.getElementById('chatContainer');
+
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.innerHTML = `<div class="message-content">${content}</div>`;
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'message assistant';
+            div.id = 'typing';
+            div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+            chatContainer.appendChild(div);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeTyping() {
+            const t = document.getElementById('typing');
+            if (t) t.remove();
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // 如果是第一条消息，隐藏所有引导元素
+            if (isFirstMessage) {
+                const startBtn = document.getElementById('startChatBtn');
+                const demoConv = document.getElementById('demoConversation');
+                const guideHint = document.querySelector('.guide-hint');
+                
+                if (startBtn) {
+                    startBtn.style.opacity = '0';
+                    startBtn.style.transform = 'scale(0.9)';
+                    setTimeout(() => startBtn.remove(), 300);
+                }
+                
+                if (demoConv) {
+                    demoConv.style.opacity = '0';
+                    setTimeout(() => demoConv.remove(), 300);
+                }
+                
+                if (guideHint) {
+                    guideHint.style.opacity = '0';
+                    setTimeout(() => guideHint.remove(), 300);
+                }
+                
+                isFirstMessage = false;
+            }
+
+            addMessage('user', message);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            showTyping();
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, category: currentSubCategory, history: history.slice(-4) })
+                });
+                const data = await res.json();
+                removeTyping();
+                if (data.success) {
+                    addMessage('assistant', data.reply);
+                    history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
+                } else {
+                    addMessage('assistant', `抱歉：${data.error}`);
+                }
+            } catch (e) {
+                removeTyping();
+                addMessage('assistant', '网络异常，请稍后再试。');
+            }
+            sendBtn.disabled = false;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+        init();
+    </script>
+</body>
+</html>
