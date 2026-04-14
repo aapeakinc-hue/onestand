@@ -293,9 +293,16 @@ var _hmt = _hmt || [];
             align-items: center;
         }
 
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         input[type="text"] {
             flex: 1;
-            padding: 14px 20px;
+            padding: 14px 50px 14px 20px;
             border: 1px solid #d8cdb8;
             border-radius: 24px;
             font-size: 15px;
@@ -313,6 +320,80 @@ var _hmt = _hmt || [];
 
         input[type="text"]::placeholder {
             color: #b8a890;
+        }
+
+        /* 语音按钮 */
+        .voice-btn {
+            position: absolute;
+            right: 8px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            color: #8b7355;
+        }
+
+        .voice-btn:hover {
+            background: rgba(139, 68, 19, 0.1);
+            color: #8b4413;
+        }
+
+        .voice-btn.recording {
+            color: #e74c3c;
+            animation: voicePulse 1s ease-in-out infinite;
+        }
+
+        @keyframes voicePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 语音指示器 */
+        .voice-indicator {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(139, 68, 19, 0.95);
+            color: #fff;
+            padding: 30px 50px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .voice-indicator.active {
+            display: block;
+        }
+
+        .voice-indicator .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            animation: voiceWave 1.5s ease-in-out infinite;
+        }
+
+        @keyframes voiceWave {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .voice-indicator .text {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .voice-indicator .hint {
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         button.send-btn {
@@ -565,8 +646,15 @@ var _hmt = _hmt || [];
             }
 
             input[type="text"] {
-                padding: 14px 18px;
+                padding: 14px 50px 14px 18px;
                 font-size: 15px;
+            }
+
+            .voice-btn {
+                width: 40px;
+                height: 40px;
+                right: 6px;
+                font-size: 20px;
             }
 
             button.send-btn {
@@ -646,6 +734,13 @@ var _hmt = _hmt || [];
             </div>
         </div>
 
+        <!-- 语音指示器 -->
+        <div class="voice-indicator" id="voiceIndicator">
+            <div class="icon">🎤</div>
+            <div class="text">正在聆听...</div>
+            <div class="hint">点击停止或再次点击麦克风图标</div>
+        </div>
+
         <!-- 底部输入区域 -->
         <div class="input-area" id="inputArea">
             <div class="current-category" id="currentCategory">
@@ -653,7 +748,10 @@ var _hmt = _hmt || [];
                 <span id="categoryText">职场事业 · 职场人际关系</span>
             </div>
             <div class="input-group">
-                <input type="text" id="userInput" placeholder="点击上方问题，或在这里输入你的困惑..." />
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="点击上方问题，或在这里输入你的困惑..." />
+                    <button class="voice-btn" id="voiceBtn" title="语音输入">🎤</button>
+                </div>
                 <button class="send-btn" id="sendBtn">发送</button>
             </div>
         </div>
@@ -747,10 +845,13 @@ var _hmt = _hmt || [];
         let currentSubCategory = 'workplace-conflict';
         let history = [];
         let isFirstMessage = true;
+        let recognition = null;
+        let isRecording = false;
 
         function init() {
             renderSubCategories('workplace');
             updateCategoryDisplay();
+            initVoiceRecognition();
 
             document.querySelectorAll('.main-category').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -834,6 +935,101 @@ var _hmt = _hmt || [];
             });
         }
 
+        // 语音识别功能
+        function initVoiceRecognition() {
+            // 检查浏览器是否支持语音识别
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (!SpeechRecognition) {
+                console.log('浏览器不支持语音识别');
+                document.getElementById('voiceBtn').style.display = 'none';
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isRecording = true;
+                document.getElementById('voiceBtn').classList.add('recording');
+                document.getElementById('voiceIndicator').classList.add('active');
+                console.log('语音识别已启动');
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                console.log('识别结果:', transcript);
+                document.getElementById('userInput').value = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                console.error('语音识别错误:', event.error);
+                let errorMessage = '语音识别失败';
+                
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMessage = '未检测到语音，请重试';
+                        break;
+                    case 'audio-capture':
+                        errorMessage = '无法访问麦克风';
+                        break;
+                    case 'not-allowed':
+                        errorMessage = '麦克风权限被拒绝';
+                        break;
+                    case 'network':
+                        errorMessage = '网络连接失败';
+                        break;
+                }
+                
+                alert(errorMessage);
+                stopRecording();
+            };
+
+            recognition.onend = function() {
+                stopRecording();
+            };
+
+            // 绑定语音按钮事件
+            document.getElementById('voiceBtn').addEventListener('click', toggleRecording);
+        }
+
+        function toggleRecording() {
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        function startRecording() {
+            if (!recognition) {
+                alert('您的浏览器不支持语音识别功能');
+                return;
+            }
+
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error('启动语音识别失败:', e);
+            }
+        }
+
+        function stopRecording() {
+            if (recognition && isRecording) {
+                try {
+                    recognition.stop();
+                } catch (e) {
+                    console.error('停止语音识别失败:', e);
+                }
+            }
+            
+            isRecording = false;
+            document.getElementById('voiceBtn').classList.remove('recording');
+            document.getElementById('voiceIndicator').classList.remove('active');
+        }
+
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const chatContainer = document.getElementById('chatContainer');
@@ -905,6 +1101,9 @@ var _hmt = _hmt || [];
                 if (data.success) {
                     addMessage('assistant', data.reply);
                     history.push({ role: 'user', content: message }, { role: 'assistant', content: data.reply });
+                    
+                    // 可选：播放语音回复（需要浏览器支持）
+                    // playVoiceResponse(data.reply);
                 } else {
                     addMessage('assistant', `抱歉：${data.error}`);
                 }
