@@ -111,7 +111,7 @@ var _hmt = _hmt || [];
             background: #fffef9;
             border-bottom: 1px solid #e8e0d5;
             flex-shrink: 0;
-            max-height: 160px;
+            max-height: 180px;
             overflow: visible;
         }
 
@@ -343,8 +343,8 @@ var _hmt = _hmt || [];
         .voice-btn {
             position: absolute;
             right: 8px;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             border: 2px solid #d8cdb8;
             background: linear-gradient(135deg, #fff 0%, #faf8f5 100%);
             border-radius: 50%;
@@ -353,7 +353,7 @@ var _hmt = _hmt || [];
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            font-size: 20px;
+            font-size: 22px;
             color: #8b4413;
             box-shadow: 0 2px 8px rgba(139, 68, 19, 0.1);
             z-index: 10;
@@ -437,6 +437,31 @@ var _hmt = _hmt || [];
         .voice-indicator .hint {
             font-size: 14px;
             opacity: 0.8;
+        }
+
+        /* Android提示 */
+        .android-tip {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(139, 68, 19, 0.95);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            z-index: 999;
+            animation: slideDown 0.3s ease;
+        }
+
+        .android-tip.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         button.send-btn {
@@ -694,10 +719,10 @@ var _hmt = _hmt || [];
             }
 
             .voice-btn {
-                width: 48px;
-                height: 48px;
+                width: 52px;
+                height: 52px;
                 right: 6px;
-                font-size: 22px;
+                font-size: 24px;
             }
 
             button.send-btn {
@@ -736,6 +761,9 @@ var _hmt = _hmt || [];
     <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Android提示条 -->
+    <div class="android-tip" id="androidTip"></div>
+
     <div class="container">
         <!-- 顶部标题栏 -->
         <div class="header">
@@ -772,7 +800,7 @@ var _hmt = _hmt || [];
                 <div class="demo-message assistant">我能理解你的委屈。在职场中，这种情况往往不是你的错...</div>
             </div>
             <div class="guide-hint">
-                <p class="hint-text">💡 点击上方推荐问题，快速开始对话</p>
+                <p class="hint-text">💡 点击下方推荐问题，快速开始对话</p>
                 <p class="hint-sub">或者点击右侧🎤按钮，用语音告诉我你的困扰</p>
             </div>
         </div>
@@ -780,8 +808,8 @@ var _hmt = _hmt || [];
         <!-- 语音指示器 -->
         <div class="voice-indicator" id="voiceIndicator">
             <div class="icon">🎤</div>
-            <div class="text">正在聆听...</div>
-            <div class="hint">点击停止或再次点击麦克风图标</div>
+            <div class="text" id="voiceText">正在聆听...</div>
+            <div class="hint" id="voiceHint">点击停止或再次点击麦克风图标</div>
         </div>
 
         <!-- 底部输入区域 -->
@@ -910,14 +938,48 @@ var _hmt = _hmt || [];
             return hotTopics[dayOfWeek] || hotTopics[0];
         }
 
+        // 检测设备和浏览器
+        function detectDevice() {
+            const userAgent = navigator.userAgent;
+            const isAndroid = /Android/i.test(userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+            const isChrome = /Chrome/i.test(userAgent);
+            const isSafari = /Safari/i.test(userAgent) && !/Chrome/i.test(userAgent);
+            const isHuaweiBrowser = /HuaweiBrowser|HMSCore/i.test(userAgent);
+            const isHonorBrowser = /HonorBrowser/i.test(userAgent);
+            const isQQBrowser = /QQBrowser/i.test(userAgent);
+            const isUCBrowser = /UCBrowser/i.test(userAgent);
+            
+            return {
+                isAndroid,
+                isIOS,
+                isChrome,
+                isSafari,
+                isHuaweiBrowser,
+                isHonorBrowser,
+                isQQBrowser,
+                isUCBrowser,
+                userAgent
+            };
+        }
+
         let currentMainCategory = 'workplace';
         let currentSubCategory = 'workplace-conflict';
         let history = [];
         let isFirstMessage = true;
         let recognition = null;
         let isRecording = false;
+        let deviceInfo = null;
 
         function init() {
+            deviceInfo = detectDevice();
+            console.log('设备信息:', deviceInfo);
+            
+            // 显示Android提示
+            if (deviceInfo.isAndroid) {
+                showAndroidTip();
+            }
+            
             renderSubCategories('workplace');
             updateCategoryDisplay();
             initVoiceRecognition();
@@ -946,6 +1008,32 @@ var _hmt = _hmt || [];
                     this.style.transform = 'scale(1)';
                 }, 100);
             });
+        }
+
+        // 显示Android提示
+        function showAndroidTip() {
+            const tip = document.getElementById('androidTip');
+            let message = '';
+            
+            if (deviceInfo.isHuaweiBrowser || deviceInfo.isHonorBrowser) {
+                message = '💡 检测到华为/荣耀浏览器，建议使用Chrome浏览器以获得更好的语音识别体验';
+            } else if (deviceInfo.isUCBrowser) {
+                message = '💡 检测到UC浏览器，建议使用Chrome浏览器以获得更好的语音识别体验';
+            } else if (deviceInfo.isQQBrowser) {
+                message = '✅ QQ浏览器支持语音识别，点击🎤即可使用';
+            } else if (deviceInfo.isAndroid && deviceInfo.isChrome) {
+                message = '✅ Chrome Android支持语音识别，点击🎤即可使用';
+            }
+            
+            if (message) {
+                tip.textContent = message;
+                tip.classList.add('active');
+                
+                // 5秒后自动隐藏
+                setTimeout(() => {
+                    tip.classList.remove('active');
+                }, 5000);
+            }
         }
 
         function updateCategoryDisplay() {
@@ -1016,9 +1104,35 @@ var _hmt = _hmt || [];
             });
         }
 
-        // 语音识别功能 - 增强版
+        // 语音识别功能 - Android增强版
         function initVoiceRecognition() {
             console.log('初始化语音识别...');
+            console.log('设备信息:', deviceInfo);
+            
+            // Android特殊处理
+            if (deviceInfo.isAndroid) {
+                console.log('检测到Android设备');
+                
+                // 检查是否为华为/荣耀浏览器
+                if (deviceInfo.isHuaweiBrowser || deviceInfo.isHonorBrowser) {
+                    console.log('华为/荣耀浏览器，语音识别支持有限');
+                    alert('华为/荣耀浏览器可能不完全支持语音识别。\n\n建议使用Chrome浏览器以获得最佳体验。\n\n或点击下方推荐问题快速开始对话。');
+                    document.getElementById('voiceBtn').style.opacity = '0.6';
+                    document.getElementById('voiceBtn').style.cursor = 'not-allowed';
+                    document.getElementById('voiceBtn').title = '当前浏览器不支持，建议使用Chrome';
+                    return;
+                }
+                
+                // 检查是否为UC浏览器
+                if (deviceInfo.isUCBrowser) {
+                    console.log('UC浏览器，语音识别支持有限');
+                    alert('UC浏览器可能不完全支持语音识别。\n\n建议使用Chrome浏览器以获得最佳体验。\n\n或点击下方推荐问题快速开始对话。');
+                    document.getElementById('voiceBtn').style.opacity = '0.6';
+                    document.getElementById('voiceBtn').style.cursor = 'not-allowed';
+                    document.getElementById('voiceBtn').title = '当前浏览器不支持，建议使用Chrome';
+                    return;
+                }
+            }
             
             // 检测浏览器支持的语音识别API
             const SpeechRecognition = window.SpeechRecognition || 
@@ -1027,8 +1141,16 @@ var _hmt = _hmt || [];
                                       window.msSpeechRecognition;
             
             if (!SpeechRecognition) {
-                console.log('浏览器不支持语音识别，将尝试备用方案');
-                alert('您的浏览器可能不支持语音识别功能。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                console.log('浏览器不支持语音识别');
+                
+                if (deviceInfo.isIOS) {
+                    alert('iOS Safari支持语音识别，但当前版本可能不支持。\n\n请更新iOS系统或使用最新版Safari浏览器。');
+                } else if (deviceInfo.isAndroid) {
+                    alert('Android设备建议使用Chrome浏览器以获得语音识别功能。\n\n或点击下方推荐问题快速开始对话。');
+                } else {
+                    alert('您的浏览器不支持语音识别功能。\n\n建议使用 Chrome、Edge 或 Safari 浏览器。\n\n或点击下方推荐问题快速开始对话。');
+                }
+                
                 document.getElementById('voiceBtn').style.opacity = '0.5';
                 document.getElementById('voiceBtn').style.cursor = 'not-allowed';
                 return;
@@ -1036,15 +1158,33 @@ var _hmt = _hmt || [];
 
             try {
                 recognition = new SpeechRecognition();
+                
+                // 根据设备优化参数
                 recognition.lang = 'zh-CN';
                 recognition.continuous = false;
                 recognition.interimResults = false;
                 recognition.maxAlternatives = 1;
+                
+                // Android优化：增加识别时长
+                if (deviceInfo.isAndroid) {
+                    recognition.maxAlternatives = 3;
+                    console.log('Android模式：启用多候选识别');
+                }
 
                 recognition.onstart = function() {
                     isRecording = true;
                     document.getElementById('voiceBtn').classList.add('recording');
                     document.getElementById('voiceIndicator').classList.add('active');
+                    
+                    // 根据设备更新提示文字
+                    if (deviceInfo.isAndroid) {
+                        document.getElementById('voiceText').textContent = '正在聆听... (Android)';
+                    } else if (deviceInfo.isIOS) {
+                        document.getElementById('voiceText').textContent = '正在聆听... (iOS)';
+                    } else {
+                        document.getElementById('voiceText').textContent = '正在聆听...';
+                    }
+                    
                     console.log('语音识别已启动');
                 };
 
@@ -1053,9 +1193,10 @@ var _hmt = _hmt || [];
                     const confidence = event.results[0][0].confidence;
                     console.log('识别结果:', transcript, '置信度:', confidence);
                     
-                    // 如果置信度太低，提示用户重试
-                    if (confidence < 0.5) {
-                        console.log('识别置信度较低:', confidence);
+                    // Android特殊处理：检查置信度
+                    if (deviceInfo.isAndroid && confidence < 0.5) {
+                        console.log('Android识别置信度较低:', confidence);
+                        document.getElementById('voiceHint').textContent = '识别结果可能不准确，请手动修正';
                     }
                     
                     document.getElementById('userInput').value = transcript;
@@ -1070,7 +1211,7 @@ var _hmt = _hmt || [];
                             errorMessage = '未检测到语音，请重试';
                             break;
                         case 'audio-capture':
-                            errorMessage = '无法访问麦克风，请检查设备设置';
+                            errorMessage = '无法访问麦克风，请检查设备设置和权限';
                             break;
                         case 'not-allowed':
                             errorMessage = '麦克风权限被拒绝，请在浏览器设置中允许';
@@ -1083,6 +1224,11 @@ var _hmt = _hmt || [];
                             break;
                         default:
                             errorMessage = '语音识别失败: ' + event.error;
+                    }
+                    
+                    // Android特殊提示
+                    if (deviceInfo.isAndroid) {
+                        errorMessage += '\n\nAndroid提示：请确保使用Chrome浏览器，并授予麦克风权限。';
                     }
                     
                     alert(errorMessage);
@@ -1101,7 +1247,12 @@ var _hmt = _hmt || [];
                 console.log('语音识别初始化成功');
             } catch (e) {
                 console.error('语音识别初始化失败:', e);
-                alert('语音识别初始化失败，请刷新页面重试');
+                
+                if (deviceInfo.isAndroid) {
+                    alert('Android语音识别初始化失败。\n\n建议：\n1. 使用Chrome浏览器\n2. 清除浏览器缓存\n3. 重启设备\n\n或点击下方推荐问题快速开始对话。');
+                } else {
+                    alert('语音识别初始化失败，请刷新页面重试。\n\n或点击下方推荐问题快速开始对话。');
+                }
             }
         }
 
@@ -1115,7 +1266,11 @@ var _hmt = _hmt || [];
 
         function startRecording() {
             if (!recognition) {
-                alert('您的浏览器不支持语音识别功能。建议使用 Chrome、Edge 或 Safari 浏览器。');
+                if (deviceInfo.isAndroid) {
+                    alert('您的浏览器不支持语音识别。\n\n建议使用Chrome浏览器。\n\n或点击下方推荐问题快速开始对话。');
+                } else {
+                    alert('您的浏览器不支持语音识别功能。\n\n建议使用 Chrome、Edge 或 Safari 浏览器。\n\n或点击下方推荐问题快速开始对话。');
+                }
                 return;
             }
 
@@ -1124,6 +1279,7 @@ var _hmt = _hmt || [];
                 console.log('开始录音...');
             } catch (e) {
                 console.error('启动语音识别失败:', e);
+                
                 if (e.message.includes('already started')) {
                     stopRecording();
                     setTimeout(() => startRecording(), 100);
@@ -1183,6 +1339,7 @@ var _hmt = _hmt || [];
                 const startBtn = document.getElementById('startChatBtn');
                 const demoConv = document.getElementById('demoConversation');
                 const guideHint = document.querySelector('.guide-hint');
+                const androidTip = document.getElementById('androidTip');
                 
                 if (startBtn) {
                     startBtn.style.opacity = '0';
@@ -1198,6 +1355,11 @@ var _hmt = _hmt || [];
                 if (guideHint) {
                     guideHint.style.opacity = '0';
                     setTimeout(() => guideHint.remove(), 300);
+                }
+                
+                if (androidTip) {
+                    androidTip.style.opacity = '0';
+                    setTimeout(() => androidTip.remove(), 300);
                 }
                 
                 isFirstMessage = false;
