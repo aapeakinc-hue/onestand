@@ -800,7 +800,7 @@ var _hmt = _hmt || [];
                 <div class="demo-message assistant">我能理解你的委屈。在职场中，这种情况往往不是你的错...</div>
             </div>
             <div class="guide-hint">
-                <p class="hint-text">💡 点击下方推荐问题，快速开始对话</p>
+                <p class="hint-text">💡 点击上方推荐问题，快速开始对话</p>
                 <p class="hint-sub">或者点击右侧🎤按钮，用语音告诉我你的困扰</p>
             </div>
         </div>
@@ -915,26 +915,16 @@ var _hmt = _hmt || [];
         // 每日热点（根据日期动态生成）
         function getDailyHotTopics() {
             const today = new Date();
-            const dayOfWeek = today.getDay(); // 0-6, 0 is Sunday
-            
-            // 根据星期几生成不同的热点话题
+            const dayOfWeek = today.getDay();
             const hotTopics = [
-                // 周一 - 职场主题
                 ['周一综合症怎么办？', '如何快速进入工作状态？', '周一开会太多怎么应对？'],
-                // 周二 - 人际主题
                 ['如何和难相处的同事相处？', '怎么拒绝不想去的饭局？', '职场中如何建立好人缘？'],
-                // 周三 - 情感主题
                 ['周三情绪低落怎么办？', '如何保持恋爱新鲜感？', '感觉孤独了怎么缓解？'],
-                // 周四 - 家庭主题
                 ['婆媳矛盾怎么化解？', '孩子不听话怎么办？', '如何平衡工作和家庭？'],
-                // 周五 - 人生主题
                 ['周末如何安排才不虚度？', '35岁焦虑怎么办？', '如何找到人生意义？'],
-                // 周六 - 心理主题
                 ['周末失眠怎么办？', '如何缓解焦虑情绪？', '总觉得不自信怎么破？'],
-                // 周日 - 自我提升
                 ['如何制定下周计划？', '怎么培养阅读习惯？', '如何提升个人魅力？']
             ];
-            
             return hotTopics[dayOfWeek] || hotTopics[0];
         }
 
@@ -949,7 +939,6 @@ var _hmt = _hmt || [];
             const isHonorBrowser = /HonorBrowser/i.test(userAgent);
             const isQQBrowser = /QQBrowser/i.test(userAgent);
             const isUCBrowser = /UCBrowser/i.test(userAgent);
-            
             return {
                 isAndroid,
                 isIOS,
@@ -973,13 +962,9 @@ var _hmt = _hmt || [];
 
         function init() {
             deviceInfo = detectDevice();
-            console.log('设备信息:', deviceInfo);
-            
-            // 显示Android提示
             if (deviceInfo.isAndroid) {
                 showAndroidTip();
             }
-            
             renderSubCategories('workplace');
             updateCategoryDisplay();
             initVoiceRecognition();
@@ -994,15 +979,12 @@ var _hmt = _hmt || [];
                 });
             });
 
-            // 开始对话按钮事件
             document.getElementById('startChatBtn').addEventListener('click', function() {
                 const inputArea = document.getElementById('inputArea');
                 inputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 setTimeout(() => {
                     document.getElementById('userInput').focus();
                 }, 300);
-                
-                // 添加视觉反馈
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';
@@ -1010,11 +992,9 @@ var _hmt = _hmt || [];
             });
         }
 
-        // 显示Android提示
         function showAndroidTip() {
             const tip = document.getElementById('androidTip');
             let message = '';
-            
             if (deviceInfo.isHuaweiBrowser || deviceInfo.isHonorBrowser) {
                 message = '💡 检测到华为/荣耀浏览器，建议使用Chrome浏览器以获得更好的语音识别体验';
             } else if (deviceInfo.isUCBrowser) {
@@ -1024,12 +1004,9 @@ var _hmt = _hmt || [];
             } else if (deviceInfo.isAndroid && deviceInfo.isChrome) {
                 message = '✅ Chrome Android支持语音识别，点击🎤即可使用';
             }
-            
             if (message) {
                 tip.textContent = message;
                 tip.classList.add('active');
-                
-                // 5秒后自动隐藏
                 setTimeout(() => {
                     tip.classList.remove('active');
                 }, 5000);
@@ -1069,88 +1046,47 @@ var _hmt = _hmt || [];
         function renderQuestions(sub) {
             const container = document.getElementById('suggestedQuestions');
             if (!sub || !sub.questions) { 
-                console.log('sub or sub.questions is undefined:', sub);
                 container.innerHTML = ''; 
                 return; 
             }
-            
-            // 获取每日热点
             const hotTopics = getDailyHotTopics();
-            
-            // 合并推荐问题和热点话题
             const allQuestions = [
                 ...hotTopics.map(q => ({ text: q, isHot: true })),
                 ...sub.questions.map(q => ({ text: q, isHot: false }))
             ];
-            
             const questionsHTML = allQuestions.map(q => 
                 `<button class="suggested-question ${q.isHot ? 'hot-topic' : ''}" title="${q.isHot ? '🔥 今日热点' : ''}">
                     ${q.isHot ? '🔥 ' : ''}${q.text}
                 </button>`
             ).join('');
-            
             container.innerHTML = `<span class="suggested-questions-label">推荐：</span>` + questionsHTML;
-            
-            console.log('Questions rendered with hot topics:', allQuestions);
-            
             container.querySelectorAll('.suggested-question').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const questionText = this.textContent.replace('🔥 ', '');
                     document.getElementById('userInput').value = questionText;
                     document.getElementById('userInput').focus();
-                    // 自动发送消息
                     setTimeout(() => sendMessage(), 300);
                 });
             });
         }
 
-        // 语音识别功能 - Android增强版
         function initVoiceRecognition() {
-            console.log('初始化语音识别...');
-            console.log('设备信息:', deviceInfo);
-            
-            // Android特殊处理
             if (deviceInfo.isAndroid) {
-                console.log('检测到Android设备');
-                
-                // 检查是否为华为/荣耀浏览器
-                if (deviceInfo.isHuaweiBrowser || deviceInfo.isHonorBrowser) {
-                    console.log('华为/荣耀浏览器，语音识别支持有限');
-                    alert('华为/荣耀浏览器可能不完全支持语音识别。\n\n建议使用Chrome浏览器以获得最佳体验。\n\n或点击下方推荐问题快速开始对话。');
+                if (deviceInfo.isHuaweiBrowser || deviceInfo.isHonorBrowser || deviceInfo.isUCBrowser) {
+                    alert('当前浏览器可能不完全支持语音识别。\n\n建议使用Chrome浏览器以获得最佳体验。');
                     document.getElementById('voiceBtn').style.opacity = '0.6';
                     document.getElementById('voiceBtn').style.cursor = 'not-allowed';
-                    document.getElementById('voiceBtn').title = '当前浏览器不支持，建议使用Chrome';
-                    return;
-                }
-                
-                // 检查是否为UC浏览器
-                if (deviceInfo.isUCBrowser) {
-                    console.log('UC浏览器，语音识别支持有限');
-                    alert('UC浏览器可能不完全支持语音识别。\n\n建议使用Chrome浏览器以获得最佳体验。\n\n或点击下方推荐问题快速开始对话。');
-                    document.getElementById('voiceBtn').style.opacity = '0.6';
-                    document.getElementById('voiceBtn').style.cursor = 'not-allowed';
-                    document.getElementById('voiceBtn').title = '当前浏览器不支持，建议使用Chrome';
                     return;
                 }
             }
             
-            // 检测浏览器支持的语音识别API
             const SpeechRecognition = window.SpeechRecognition || 
                                       window.webkitSpeechRecognition || 
                                       window.mozSpeechRecognition || 
                                       window.msSpeechRecognition;
             
             if (!SpeechRecognition) {
-                console.log('浏览器不支持语音识别');
-                
-                if (deviceInfo.isIOS) {
-                    alert('iOS Safari支持语音识别，但当前版本可能不支持。\n\n请更新iOS系统或使用最新版Safari浏览器。');
-                } else if (deviceInfo.isAndroid) {
-                    alert('Android设备建议使用Chrome浏览器以获得语音识别功能。\n\n或点击下方推荐问题快速开始对话。');
-                } else {
-                    alert('您的浏览器不支持语音识别功能。\n\n建议使用 Chrome、Edge 或 Safari 浏览器。\n\n或点击下方推荐问题快速开始对话。');
-                }
-                
+                alert('您的浏览器不支持语音识别功能。\n\n建议使用 Chrome、Edge 或 Safari 浏览器。');
                 document.getElementById('voiceBtn').style.opacity = '0.5';
                 document.getElementById('voiceBtn').style.cursor = 'not-allowed';
                 return;
@@ -1158,101 +1094,52 @@ var _hmt = _hmt || [];
 
             try {
                 recognition = new SpeechRecognition();
-                
-                // 根据设备优化参数
                 recognition.lang = 'zh-CN';
                 recognition.continuous = false;
                 recognition.interimResults = false;
                 recognition.maxAlternatives = 1;
-                
-                // Android优化：增加识别时长
-                if (deviceInfo.isAndroid) {
-                    recognition.maxAlternatives = 3;
-                    console.log('Android模式：启用多候选识别');
-                }
 
                 recognition.onstart = function() {
                     isRecording = true;
                     document.getElementById('voiceBtn').classList.add('recording');
                     document.getElementById('voiceIndicator').classList.add('active');
-                    
-                    // 根据设备更新提示文字
-                    if (deviceInfo.isAndroid) {
-                        document.getElementById('voiceText').textContent = '正在聆听... (Android)';
-                    } else if (deviceInfo.isIOS) {
-                        document.getElementById('voiceText').textContent = '正在聆听... (iOS)';
-                    } else {
-                        document.getElementById('voiceText').textContent = '正在聆听...';
-                    }
-                    
-                    console.log('语音识别已启动');
                 };
 
                 recognition.onresult = function(event) {
                     const transcript = event.results[0][0].transcript;
-                    const confidence = event.results[0][0].confidence;
-                    console.log('识别结果:', transcript, '置信度:', confidence);
-                    
-                    // Android特殊处理：检查置信度
-                    if (deviceInfo.isAndroid && confidence < 0.5) {
-                        console.log('Android识别置信度较低:', confidence);
-                        document.getElementById('voiceHint').textContent = '识别结果可能不准确，请手动修正';
-                    }
-                    
                     document.getElementById('userInput').value = transcript;
                 };
 
                 recognition.onerror = function(event) {
-                    console.error('语音识别错误:', event.error);
                     let errorMessage = '语音识别失败';
-                    
                     switch(event.error) {
                         case 'no-speech':
                             errorMessage = '未检测到语音，请重试';
                             break;
                         case 'audio-capture':
-                            errorMessage = '无法访问麦克风，请检查设备设置和权限';
+                            errorMessage = '无法访问麦克风，请检查设备设置';
                             break;
                         case 'not-allowed':
-                            errorMessage = '麦克风权限被拒绝，请在浏览器设置中允许';
+                            errorMessage = '麦克风权限被拒绝';
                             break;
                         case 'network':
-                            errorMessage = '网络连接失败，请检查网络';
-                            break;
-                        case 'aborted':
-                            errorMessage = '语音识别被中断';
+                            errorMessage = '网络连接失败';
                             break;
                         default:
                             errorMessage = '语音识别失败: ' + event.error;
                     }
-                    
-                    // Android特殊提示
-                    if (deviceInfo.isAndroid) {
-                        errorMessage += '\n\nAndroid提示：请确保使用Chrome浏览器，并授予麦克风权限。';
-                    }
-                    
                     alert(errorMessage);
                     stopRecording();
                 };
 
                 recognition.onend = function() {
-                    console.log('语音识别结束');
                     stopRecording();
                 };
 
-                // 绑定语音按钮事件
                 document.getElementById('voiceBtn').addEventListener('click', toggleRecording);
                 document.getElementById('voiceIndicator').addEventListener('click', toggleRecording);
-                
-                console.log('语音识别初始化成功');
             } catch (e) {
-                console.error('语音识别初始化失败:', e);
-                
-                if (deviceInfo.isAndroid) {
-                    alert('Android语音识别初始化失败。\n\n建议：\n1. 使用Chrome浏览器\n2. 清除浏览器缓存\n3. 重启设备\n\n或点击下方推荐问题快速开始对话。');
-                } else {
-                    alert('语音识别初始化失败，请刷新页面重试。\n\n或点击下方推荐问题快速开始对话。');
-                }
+                alert('语音识别初始化失败，请刷新页面重试。');
             }
         }
 
@@ -1266,25 +1153,15 @@ var _hmt = _hmt || [];
 
         function startRecording() {
             if (!recognition) {
-                if (deviceInfo.isAndroid) {
-                    alert('您的浏览器不支持语音识别。\n\n建议使用Chrome浏览器。\n\n或点击下方推荐问题快速开始对话。');
-                } else {
-                    alert('您的浏览器不支持语音识别功能。\n\n建议使用 Chrome、Edge 或 Safari 浏览器。\n\n或点击下方推荐问题快速开始对话。');
-                }
+                alert('您的浏览器不支持语音识别。');
                 return;
             }
-
             try {
                 recognition.start();
-                console.log('开始录音...');
             } catch (e) {
-                console.error('启动语音识别失败:', e);
-                
                 if (e.message.includes('already started')) {
                     stopRecording();
                     setTimeout(() => startRecording(), 100);
-                } else {
-                    alert('启动语音识别失败: ' + e.message);
                 }
             }
         }
@@ -1293,12 +1170,8 @@ var _hmt = _hmt || [];
             if (recognition && isRecording) {
                 try {
                     recognition.stop();
-                    console.log('停止录音...');
-                } catch (e) {
-                    console.error('停止语音识别失败:', e);
-                }
+                } catch (e) {}
             }
-            
             isRecording = false;
             document.getElementById('voiceBtn').classList.remove('recording');
             document.getElementById('voiceIndicator').classList.remove('active');
@@ -1334,7 +1207,6 @@ var _hmt = _hmt || [];
             const message = userInput.value.trim();
             if (!message) return;
 
-            // 如果是第一条消息，隐藏所有引导元素
             if (isFirstMessage) {
                 const startBtn = document.getElementById('startChatBtn');
                 const demoConv = document.getElementById('demoConversation');
@@ -1343,25 +1215,20 @@ var _hmt = _hmt || [];
                 
                 if (startBtn) {
                     startBtn.style.opacity = '0';
-                    startBtn.style.transform = 'scale(0.9)';
                     setTimeout(() => startBtn.remove(), 300);
                 }
-                
                 if (demoConv) {
                     demoConv.style.opacity = '0';
                     setTimeout(() => demoConv.remove(), 300);
                 }
-                
                 if (guideHint) {
                     guideHint.style.opacity = '0';
                     setTimeout(() => guideHint.remove(), 300);
                 }
-                
                 if (androidTip) {
                     androidTip.style.opacity = '0';
                     setTimeout(() => androidTip.remove(), 300);
                 }
-                
                 isFirstMessage = false;
             }
 
@@ -1374,7 +1241,11 @@ var _hmt = _hmt || [];
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message, category: currentSubCategory, history: history.slice(-4) })
+                    body: JSON.stringify({ 
+                        message, 
+                        category: currentSubCategory, 
+                        history: history.slice(-12)  // ← 关键修改：从4改为12
+                    })
                 });
                 const data = await res.json();
                 removeTyping();
